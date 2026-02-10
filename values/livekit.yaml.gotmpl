@@ -1,0 +1,30 @@
+{{- define "lk-secret" -}}{{- $seed := index . 0 -}}{{- $id := index . 1 -}}{{- $ov := index . 2 -}}{{- if and $ov (hasKey $ov $id) -}}{{- index $ov $id -}}{{- else -}}{{- printf "%s:%s" $seed $id | sha256sum | trunc 50 -}}{{- end -}}{{- end -}}
+{{- define "lk-key" -}}{{- $seed := index . 0 -}}{{- $id := index . 1 -}}{{- $ov := index . 2 -}}{{- if and $ov (hasKey $ov $id) -}}{{- index $ov $id -}}{{- else -}}{{- printf "%s:%s" $seed $id | sha256sum | trunc 12 -}}{{- end -}}{{- end -}}
+{{- $ov := index .Values "secretOverrides" | default dict -}}
+replicaCount: 1
+terminationGracePeriodSeconds: 3600
+
+podHostNetwork: true
+
+livekit:
+  keys:
+    {{ template "lk-key" (list .Values.secretSeed "livekit-key" $ov) }}: {{ template "lk-secret" (list .Values.secretSeed "livekit-secret" $ov) }}
+  log_level: info
+  rtc:
+    use_external_ip: false
+    port_range_start: 50000
+    port_range_end: 60000
+    tcp_port: 7881
+  redis:
+    address: {{ .Values._common.services.redis.host }}:{{ .Values._common.services.redis.port }}
+    password: {{ template "lk-secret" (list .Values.secretSeed "redis" $ov) }}
+  turn:
+    enabled: false
+
+loadBalancer:
+  type: disable
+
+autoscaling:
+  enabled: false
+
+resources: {}

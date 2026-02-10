@@ -1,0 +1,40 @@
+{{- $mongodb := index .Values "mongodb" | default dict }}
+{{- $redis := index .Values "redis" | default dict }}
+{{- $rabbitmq := index .Values "rabbitmq" | default dict }}
+{{- $s3 := index .Values "s3" | default dict }}
+{{- $ingress := index .Values "ingress" | default dict }}
+{{- $tls := index .Values "tls" | default dict }}
+{{- $domain := index .Values "domain" | default "stoat.local" }}
+
+_common:
+  services:
+    mongodb:
+      host: {{ index $mongodb "host" | default "stoat-mongodb.stoat-mongodb.svc.cluster.local" }}
+      port: {{ index $mongodb "port" | default 27017 }}
+    redis:
+      host: {{ index $redis "host" | default "redis-master.stoat-redis.svc.cluster.local" }}
+      port: {{ index $redis "port" | default 6379 }}
+    rabbitmq:
+      host: {{ index $rabbitmq "host" | default "stoat-rabbitmq.stoat-rabbitmq.svc.cluster.local" }}
+      port: {{ index $rabbitmq "port" | default 5672 }}
+    s3:
+      provider: {{ index $s3 "provider" | default "minio" }}
+      endpoint: {{ index $s3 "endpoint" | default "http://minio.stoat-minio.svc.cluster.local:9000" }}
+      region: {{ index $s3 "region" | default "" }}
+      host: {{ index $s3 "host" | default "minio.stoat-minio.svc.cluster.local" }}
+      port: {{ index $s3 "port" | default 9000 }}
+
+  ingress:
+    className: {{ index $ingress "className" | default "haproxy" | quote }}
+    host: {{ $domain }}
+    tlsSecret: stoat-tls
+    tlsIssuer: {{ index $tls "issuer" | default "selfsigned" }}
+
+  # Public URLs (used in Revolt.toml [hosts] section)
+  hosts:
+    app: https://{{ $domain }}
+    api: https://{{ $domain }}/api
+    events: wss://{{ $domain }}/ws
+    autumn: https://{{ $domain }}/autumn
+    january: https://{{ $domain }}/january
+    livekit: wss://livekit.{{ $domain }}

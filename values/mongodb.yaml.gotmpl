@@ -1,0 +1,21 @@
+{{- define "secret" -}}{{- $seed := index . 0 -}}{{- $id := index . 1 -}}{{- $ov := index . 2 -}}{{- if and $ov (hasKey $ov $id) -}}{{- index $ov $id -}}{{- else -}}{{- printf "%s:%s" $seed $id | sha256sum | trunc 50 -}}{{- end -}}{{- end -}}
+{{- $ov := index .Values "secretOverrides" | default dict -}}
+# Override tag: bitnami removes specific debian tags from Docker Hub.
+# Use "latest" or pin a known-good tag after verifying availability.
+image:
+  tag: latest
+
+auth:
+  enabled: true
+  rootPassword: {{ template "secret" (list .Values.secretSeed "mongo-root" $ov) }}
+  usernames:
+    - stoat
+  passwords:
+    - {{ template "secret" (list .Values.secretSeed "mongo-user" $ov) }}
+  databases:
+    - revolt
+
+architecture: standalone
+
+persistence:
+  size: 10Gi

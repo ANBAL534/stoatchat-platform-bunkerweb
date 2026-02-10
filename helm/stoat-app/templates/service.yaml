@@ -1,0 +1,20 @@
+{{- if .Values.services }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.appName }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.appName }}
+    app.kubernetes.io/part-of: stoat
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: {{ .Values.appName }}
+  ports:
+    {{- range .Values.services }}
+    - name: {{ .name }}
+      port: {{ .port }}
+      targetPort: {{ .targetPort }}
+      protocol: {{ .protocol | default "TCP" }}
+    {{- end }}
+{{- end }}

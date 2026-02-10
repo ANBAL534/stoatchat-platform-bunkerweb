@@ -1,0 +1,10 @@
+{{- define "secret" -}}{{- $seed := index . 0 -}}{{- $id := index . 1 -}}{{- $ov := index . 2 -}}{{- if and $ov (hasKey $ov $id) -}}{{- index $ov $id -}}{{- else -}}{{- printf "%s:%s" $seed $id | sha256sum | trunc 50 -}}{{- end -}}{{- end -}}
+{{- $ov := index .Values "secretOverrides" | default dict -}}
+auth:
+  password: {{ template "secret" (list .Values.secretSeed "redis" $ov) }}
+
+architecture: standalone
+
+master:
+  persistence:
+    size: 1Gi

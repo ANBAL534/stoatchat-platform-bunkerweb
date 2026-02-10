@@ -1,0 +1,9 @@
+appName: stoat-voice-ingress
+image:
+  repository: ghcr.io/stoatchat/voice-ingress
+  tag: {{ index (.Values.stoatImageOverrides | default dict) "voiceIngress" | default .Values.stoatImageTag | quote }}
+
+services:
+  - name: http
+    port: 8500
+    targetPort: 8500

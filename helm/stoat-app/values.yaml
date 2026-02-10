@@ -1,0 +1,58 @@
+appName: ""
+
+image:
+  repository: ""
+  tag: ""
+  pullPolicy: IfNotPresent
+
+# Service ports exposed by this app.
+# Each entry creates a containerPort + a Service port.
+# Empty list = no Service, no ports (daemons like crond, pushd).
+#
+# Example:
+#   services:
+#     - name: http
+#       port: 14702        # Service port (what other pods connect to)
+#       targetPort: 14702  # Container port (what the process listens on)
+#     - name: management
+#       port: 15672
+#       targetPort: 15672
+#       protocol: TCP      # optional, defaults to TCP
+services: []
+
+# Mount Revolt.toml from ConfigMap
+mountRevoltToml: true
+revoltTomlConfigMap: revolt-toml
+
+# Environment variables (optional, for client)
+env: {}
+
+# Resource limits
+resources: {}
+
+replicas: 1
+
+# Liveness/readiness probes
+probes:
+  enabled: false
+  path: /
+  port: 0  # defaults to first service targetPort if 0
+
+# Persistent volume (optional, for stateful services like rabbitmq)
+persistence:
+  enabled: false
+  mountPath: ""
+  size: 1Gi
+  storageClass: ""
+
+# Ingress (optional, per-service)
+ingress:
+  enabled: false
+  path: /
+  pathType: Prefix
+  host: ""
+  className: ""
+  tlsSecret: ""
+  tlsIssuer: ""
+  annotations: {}
+  servicePort: 0  # defaults to first service port if 0

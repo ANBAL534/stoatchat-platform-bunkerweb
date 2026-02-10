@@ -1,0 +1,24 @@
+appName: stoat-client
+image:
+  repository: {{ .Values.clientImage.repository | quote }}
+  tag: {{ .Values.clientImage.tag | quote }}
+  pullPolicy: Always
+
+services:
+  - name: http
+    port: 5000
+    targetPort: 5000
+
+mountRevoltToml: false
+
+env:
+  REVOLT_PUBLIC_URL: {{ .Values._common.hosts.api | quote }}
+
+ingress:
+  enabled: true
+  path: /
+  pathType: Prefix
+  host: {{ .Values._common.ingress.host }}
+  className: {{ .Values._common.ingress.className }}
+  tlsSecret: {{ .Values._common.ingress.tlsSecret }}
+  tlsIssuer: {{ .Values._common.ingress.tlsIssuer }}

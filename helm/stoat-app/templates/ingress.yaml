@@ -1,0 +1,41 @@
+{{- if .Values.ingress.enabled }}
+{{- $svcPort := .Values.ingress.servicePort | default (index .Values.services 0).port }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.appName }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.appName }}
+    app.kubernetes.io/part-of: stoat
+  annotations:
+    {{- if .Values.ingress.tlsIssuer }}
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.tlsIssuer }}
+    {{- end }}
+    {{- if ne .Values.ingress.path "/" }}
+    haproxy.org/path-rewrite: {{ .Values.ingress.path }}(.*) /\1
+    {{- end }}
+    {{- range $key, $value := .Values.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+spec:
+  {{- if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          - pathType: {{ .Values.ingress.pathType }}
+            path: {{ .Values.ingress.path }}
+            backend:
+              service:
+                name: {{ .Values.appName }}
+                port:
+                  number: {{ $svcPort }}
+  {{- if .Values.ingress.tlsSecret }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.host }}
+      secretName: {{ .Values.ingress.tlsSecret }}
+  {{- end }}
+{{- end }}

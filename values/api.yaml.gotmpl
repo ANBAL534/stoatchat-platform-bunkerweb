@@ -1,0 +1,18 @@
+appName: stoat-api
+image:
+  repository: ghcr.io/stoatchat/api
+  tag: {{ index (.Values.stoatImageOverrides | default dict) "api" | default .Values.stoatImageTag | quote }}
+
+services:
+  - name: http
+    port: 14702
+    targetPort: 14702
+
+ingress:
+  enabled: true
+  path: /api/
+  pathType: Prefix
+  host: {{ .Values._common.ingress.host }}
+  className: {{ .Values._common.ingress.className }}
+  tlsSecret: {{ .Values._common.ingress.tlsSecret }}
+  tlsIssuer: {{ .Values._common.ingress.tlsIssuer }}

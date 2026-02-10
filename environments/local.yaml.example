@@ -1,0 +1,74 @@
+domain: stoat.local
+
+apps:
+  api:
+    enabled: true
+  events:
+    enabled: true
+  fileServer:
+    enabled: true
+  proxy:
+    enabled: true
+  gifbox:
+    enabled: true
+  crond:
+    enabled: true
+  pushd:
+    enabled: true
+  voiceIngress:
+    enabled: false   # requires livekit
+  client:
+    enabled: true
+
+mongodb:
+  enabled: true
+  host: stoat-mongodb.stoat-mongodb.svc.cluster.local
+  port: 27017
+
+redis:
+  enabled: true
+  host: redis-master.stoat-redis.svc.cluster.local
+  port: 6379
+
+rabbitmq:
+  enabled: true
+  host: stoat-rabbitmq.stoat-rabbitmq.svc.cluster.local
+  port: 5672
+
+minio:
+  enabled: true
+
+livekit:
+  enabled: false
+
+s3:
+  provider: minio   # minio | aws | oos
+  endpoint: http://minio.stoat-minio.svc.cluster.local:9000
+  host: minio.stoat-minio.svc.cluster.local
+  port: 9000
+
+ingress:
+  enabled: true
+  className: haproxy
+
+certManager:
+  enabled: true
+
+reflector:
+  enabled: true
+
+tls:
+  issuer: selfsigned
+
+smtp:
+  host: ""
+  port: 25
+  username: ""
+  password: ""
+  fromAddress: "noreply@stoat.local"
+  replyTo: ""
+  useTls: false
+  useStarttls: false
+
+# Generate with: openssl rand -hex 24
+secretSeed: ""

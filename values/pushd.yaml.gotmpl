@@ -1,0 +1,6 @@
+appName: stoat-pushd
+image:
+  repository: ghcr.io/stoatchat/pushd
+  tag: {{ index (.Values.stoatImageOverrides | default dict) "pushd" | default .Values.stoatImageTag | quote }}
+
+services: []

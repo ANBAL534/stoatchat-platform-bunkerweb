@@ -1,0 +1,10 @@
+infraChartVersions:
+  # Bitnami
+  mongodb: "16.4.3"
+  redis: "24.1.2"
+  # Others
+  minio: "5.4.0"
+  certManager: "1.19.0"
+  haproxy: "1.47.5"
+  reflector: "10.0.3"
+  livekit: "1.9.0"

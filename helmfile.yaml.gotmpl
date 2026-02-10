@@ -1,0 +1,295 @@
+# ===========================================
+# HELM REPOSITORIES
+# ===========================================
+repositories:
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami
+  - name: minio
+    url: https://charts.min.io/
+  - name: jetstack
+    url: https://charts.jetstack.io
+  - name: haproxytech
+    url: https://haproxytech.github.io/helm-charts
+  - name: emberstack
+    url: https://emberstack.github.io/helm-charts
+  - name: livekit
+    url: https://helm.livekit.io
+
+# ===========================================
+# HELM DEFAULTS
+# ===========================================
+helmDefaults:
+  wait: true
+  waitForJobs: true
+  timeout: 600
+  createNamespace: true
+
+# ===========================================
+# ENVIRONMENTS
+# ===========================================
+environments:
+  local:
+    values:
+      - versions/infra-versions.yaml
+      - versions/stoat-versions.yaml
+      - environments/local.yaml
+      - environments/vapid.secret.yaml
+      - environments/files.secret.yaml
+      - environments/_computed.yaml.gotmpl
+
+  # Template for remote deployments — copy and adapt:
+  # my-instance:
+  #   values:
+  #     - versions/infra-versions.yaml
+  #     - versions/stoat-versions.yaml
+  #     - environments/my-instance.yaml
+  #     - environments/my-instance.secret-overrides.yaml  # optional
+  #     - environments/vapid.secret.yaml
+  #     - environments/files.secret.yaml
+  #     - environments/_computed.yaml.gotmpl
+
+---
+# ===========================================
+# RELEASES
+# ===========================================
+releases:
+  # -------------------------------------------
+  # CERT-MANAGER
+  # -------------------------------------------
+  - name: cert-manager
+    namespace: stoat-cert-manager
+    chart: jetstack/cert-manager
+    version: {{ .Values.infraChartVersions.certManager | quote }}
+    condition: certManager.enabled
+    labels:
+      category: infrastructure
+    values:
+      - values/cert-manager.yaml.gotmpl
+
+  # -------------------------------------------
+  # HAPROXY INGRESS CONTROLLER
+  # -------------------------------------------
+  - name: haproxy-ingress
+    namespace: stoat-ingress
+    chart: haproxytech/kubernetes-ingress
+    version: {{ .Values.infraChartVersions.haproxy | quote }}
+    condition: ingress.enabled
+    labels:
+      category: infrastructure
+    values:
+      - values/haproxy-ingress.yaml.gotmpl
+
+  # -------------------------------------------
+  # REFLECTOR
+  # -------------------------------------------
+  - name: reflector
+    namespace: stoat-reflector
+    chart: emberstack/reflector
+    version: {{ .Values.infraChartVersions.reflector | quote }}
+    condition: reflector.enabled
+    labels:
+      category: infrastructure
+
+  # -------------------------------------------
+  # MONGODB
+  # -------------------------------------------
+  - name: stoat-mongodb
+    namespace: stoat-mongodb
+    chart: bitnami/mongodb
+    version: {{ .Values.infraChartVersions.mongodb | quote }}
+    condition: mongodb.enabled
+    labels:
+      category: infrastructure
+    values:
+      - values/mongodb.yaml.gotmpl
+
+  # -------------------------------------------
+  # REDIS
+  # -------------------------------------------
+  - name: redis
+    namespace: stoat-redis
+    chart: bitnami/redis
+    version: {{ .Values.infraChartVersions.redis | quote }}
+    condition: redis.enabled
+    labels:
+      category: infrastructure
+    values:
+      - values/redis.yaml.gotmpl
+
+  # -------------------------------------------
+  # RABBITMQ (official image, not bitnami)
+  # -------------------------------------------
+  - name: stoat-rabbitmq
+    namespace: stoat-rabbitmq
+    chart: ./helm/stoat-app
+    condition: rabbitmq.enabled
+    labels:
+      category: infrastructure
+    values:
+      - values/rabbitmq.yaml.gotmpl
+
+  # -------------------------------------------
+  # MINIO
+  # -------------------------------------------
+  - name: minio
+    namespace: stoat-minio
+    chart: minio/minio
+    version: {{ .Values.infraChartVersions.minio | quote }}
+    condition: minio.enabled
+    labels:
+      category: infrastructure
+    values:
+      - values/minio.yaml.gotmpl
+
+  # -------------------------------------------
+  # LIVEKIT
+  # -------------------------------------------
+  - name: livekit
+    namespace: stoat-livekit
+    chart: livekit/livekit-server
+    version: {{ .Values.infraChartVersions.livekit | quote }}
+    condition: livekit.enabled
+    needs:
+      - stoat-config/stoat-config
+      {{- if .Values.redis.enabled }}
+      - stoat-redis/redis
+      {{- end }}
+    labels:
+      category: infrastructure
+    values:
+      - values/livekit.yaml.gotmpl
+
+  # -------------------------------------------
+  # STOAT CONFIGURATION
+  # -------------------------------------------
+  - name: stoat-config
+    namespace: stoat-config
+    chart: ./helm/stoat-config
+    needs:
+      {{- if .Values.certManager.enabled }}
+      - stoat-cert-manager/cert-manager
+      {{- end }}
+      {{- if .Values.reflector.enabled }}
+      - stoat-reflector/reflector
+      {{- end }}
+    labels:
+      category: configuration
+    values:
+      - values/stoat-config.yaml.gotmpl
+
+  # -------------------------------------------
+  # STOAT SERVICES
+  # -------------------------------------------
+  {{- $infraNeeds := list "stoat-config/stoat-config" }}
+  {{- if .Values.mongodb.enabled }}{{ $infraNeeds = append $infraNeeds "stoat-mongodb/stoat-mongodb" }}{{ end }}
+  {{- if .Values.redis.enabled }}{{ $infraNeeds = append $infraNeeds "stoat-redis/redis" }}{{ end }}
+  {{- if .Values.rabbitmq.enabled }}{{ $infraNeeds = append $infraNeeds "stoat-rabbitmq/stoat-rabbitmq" }}{{ end }}
+  {{- if .Values.minio.enabled }}{{ $infraNeeds = append $infraNeeds "stoat-minio/minio" }}{{ end }}
+
+  - name: stoat-api
+    namespace: stoat
+    chart: ./helm/stoat-app
+    condition: apps.api.enabled
+    needs: {{ $infraNeeds | toYaml | nindent 6 }}
+    labels:
+      category: application
+      app: api
+    values:
+      - values/api.yaml.gotmpl
+
+  - name: stoat-events
+    namespace: stoat
+    chart: ./helm/stoat-app
+    condition: apps.events.enabled
+    needs: {{ $infraNeeds | toYaml | nindent 6 }}
+    labels:
+      category: application
+      app: events
+    values:
+      - values/events.yaml.gotmpl
+
+  - name: stoat-file-server
+    namespace: stoat
+    chart: ./helm/stoat-app
+    condition: apps.fileServer.enabled
+    needs: {{ $infraNeeds | toYaml | nindent 6 }}
+    labels:
+      category: application
+      app: file-server
+    values:
+      - values/file-server.yaml.gotmpl
+
+  - name: stoat-proxy
+    namespace: stoat
+    chart: ./helm/stoat-app
+    condition: apps.proxy.enabled
+    needs:
+      - stoat-config/stoat-config
+    labels:
+      category: application
+      app: proxy
+    values:
+      - values/proxy.yaml.gotmpl
+
+  - name: stoat-gifbox
+    namespace: stoat
+    chart: ./helm/stoat-app
+    condition: apps.gifbox.enabled
+    needs:
+      - stoat-config/stoat-config
+    labels:
+      category: application
+      app: gifbox
+    values:
+      - values/gifbox.yaml.gotmpl
+
+  - name: stoat-crond
+    namespace: stoat
+    chart: ./helm/stoat-app
+    condition: apps.crond.enabled
+    needs: {{ $infraNeeds | toYaml | nindent 6 }}
+    labels:
+      category: application
+      app: crond
+    values:
+      - values/crond.yaml.gotmpl
+
+  - name: stoat-pushd
+    namespace: stoat
+    chart: ./helm/stoat-app
+    condition: apps.pushd.enabled
+    needs: {{ $infraNeeds | toYaml | nindent 6 }}
+    labels:
+      category: application
+      app: pushd
+    values:
+      - values/pushd.yaml.gotmpl
+
+  - name: stoat-voice-ingress
+    namespace: stoat
+    chart: ./helm/stoat-app
+    condition: apps.voiceIngress.enabled
+    needs:
+      {{- range $infraNeeds }}
+      - {{ . }}
+      {{- end }}
+      {{- if .Values.livekit.enabled }}
+      - stoat-livekit/livekit
+      {{- end }}
+    labels:
+      category: application
+      app: voice-ingress
+    values:
+      - values/voice-ingress.yaml.gotmpl
+
+  - name: stoat-client
+    namespace: stoat
+    chart: ./helm/stoat-app
+    condition: apps.client.enabled
+    needs:
+      - stoat-config/stoat-config
+    labels:
+      category: application
+      app: client
+    values:
+      - values/client.yaml.gotmpl

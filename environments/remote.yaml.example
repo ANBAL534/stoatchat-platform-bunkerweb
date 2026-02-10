@@ -1,0 +1,88 @@
+domain: __DOMAIN__
+
+apps:
+  api:
+    enabled: true
+  events:
+    enabled: true
+  fileServer:
+    enabled: true
+  proxy:
+    enabled: true
+  gifbox:
+    enabled: true
+  crond:
+    enabled: true
+  pushd:
+    enabled: true
+  voiceIngress:
+    enabled: false   # requires livekit
+  client:
+    enabled: true
+
+# Infrastructure — disabled by default for remote deployments.
+# Enable services you want to run in-cluster, or configure external
+# endpoints below and provide credentials via secretOverrides.
+mongodb:
+  enabled: false
+  host: __MONGODB_HOST__
+  port: 27017
+
+redis:
+  enabled: false
+  host: __REDIS_HOST__
+  port: 6379
+
+rabbitmq:
+  enabled: false
+  host: __RABBITMQ_HOST__
+  port: 5672
+
+minio:
+  enabled: false
+
+livekit:
+  enabled: false
+
+s3:
+  provider: minio   # minio | aws | oos
+  endpoint: __S3_ENDPOINT__
+  host: __S3_HOST__
+  port: 443
+  # For AWS S3:
+  # provider: aws
+  # region: eu-west-1
+  # endpoint: https://s3.eu-west-1.amazonaws.com
+  # host: s3.eu-west-1.amazonaws.com
+  # For OOS (Outscale):
+  # provider: oos
+  # endpoint: https://oos.eu-west-2.outscale.com
+  # host: oos.eu-west-2.outscale.com
+
+ingress:
+  enabled: true
+  className: haproxy
+
+certManager:
+  enabled: true
+
+reflector:
+  enabled: true
+
+tls:
+  issuer: letsencrypt
+
+adminEmail: __ADMIN_EMAIL__
+
+smtp:
+  host: ""
+  port: 587
+  username: ""
+  password: ""
+  fromAddress: "noreply@__DOMAIN__"
+  replyTo: ""
+  useTls: true
+  useStarttls: false
+
+# Generate with: openssl rand -hex 24
+secretSeed: ""

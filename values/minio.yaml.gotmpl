@@ -1,0 +1,28 @@
+{{- define "secret" -}}{{- $seed := index . 0 -}}{{- $id := index . 1 -}}{{- $ov := index . 2 -}}{{- if and $ov (hasKey $ov $id) -}}{{- index $ov $id -}}{{- else -}}{{- printf "%s:%s" $seed $id | sha256sum | trunc 50 -}}{{- end -}}{{- end -}}
+{{- $ov := index .Values "secretOverrides" | default dict -}}
+mode: standalone
+replicas: 1
+
+rootUser: {{ template "secret" (list .Values.secretSeed "s3-access" $ov) }}
+rootPassword: {{ template "secret" (list .Values.secretSeed "s3-secret" $ov) }}
+
+persistence:
+  enabled: true
+  size: 10Gi
+
+resources:
+  requests:
+    memory: 256Mi
+    cpu: 250m
+  limits:
+    memory: 512Mi
+    cpu: 500m
+
+buckets:
+  - name: revolt-uploads
+    policy: none
+    purge: false
+
+# MinIO needs a network alias so that bucket-prefixed URLs resolve
+# (e.g. revolt-uploads.minio -> minio). The alias is set via compose in
+# self-hosted; in k8s this is handled by the service name.

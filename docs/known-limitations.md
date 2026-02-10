@@ -1,0 +1,112 @@
+# Known Limitations
+
+Current gotchas and limitations of the stoat-platform deployment.
+
+## HAProxy annotation mismatch
+
+The haproxytech/kubernetes-ingress controller uses `haproxy.org/*`
+annotations. The community haproxy-ingress project uses
+`haproxy-ingress.github.io/*`. These are two separate projects with
+incompatible annotation prefixes.
+
+Using the wrong prefix is **silently ignored** — no error, no warning,
+the rewrite simply doesn't happen. If path-based routing stops stripping
+prefixes, check that annotations use `haproxy.org/path-rewrite` (not
+`haproxy-ingress.github.io/rewrite-target`).
+
+## Client PWA service worker
+
+The for-web client ships a service worker that precaches ~380 JS assets.
+After rebuilding the client image, **hard refresh alone is not enough**.
+Users must either:
+
+- Unregister the service worker: DevTools → Application → Service Workers
+  → Unregister
+- Use private/incognito browsing
+- Clear site data: DevTools → Application → Storage → Clear site data
+
+This affects every client image rebuild, not just version bumps.
+
+## Revolt API versioning
+
+Auth routes (`/auth/*`) have no version prefix, but API routes use `/0.8/*`.
+The client SDK handles this transparently. If you're making direct API calls,
+be aware of the inconsistency.
+
+## SMTP disabled = no email verification
+
+When `smtp.host` is empty in `local.yaml`, the `[api.smtp]` section is
+omitted from `Revolt.toml` entirely. The API then skips email verification
+and accounts are immediately usable after creation.
+
+This is convenient for development but means anyone with network access to
+the instance can create accounts without verification.
+
+## Bitnami image removal from Docker Hub
+
+Bitnami regularly removes specific image tags from Docker Hub with no
+advance notice:
+
+- **RabbitMQ:** all `bitnami/rabbitmq` tags removed. I switched to the
+  official `rabbitmq:4-management` image deployed via the generic stoat-app
+  chart.
+- **MongoDB:** specific tags (`-debian-XX-rN` variants) removed. Only
+  `latest` works reliably. The chart forces `image.tag: latest`.
+
+Avoid adding new bitnami dependencies. Existing ones (MongoDB, Redis) should
+be monitored and ideally migrated long-term.
+
+## ConfigMap propagation requires pod restart
+
+Changes to `Revolt.toml` (via Helmfile values) update the ConfigMap, but
+running pods don't pick up the new configuration automatically. After any
+configuration change:
+
+```bash
+# Re-deploy to update the ConfigMap
+helmfile -e local sync
+
+# Restart app pods to pick up the new Revolt.toml
+kubectl rollout restart deployment -n stoat
+```
+
+## Client image pull policy
+
+The client image uses tag `dev` (mutable) and `imagePullPolicy: Always` to
+ensure the latest build is always pulled. Other Stoat services use immutable
+GHCR tags with `IfNotPresent`.
+
+If you switch the client to an immutable tag, you can change the pull policy
+to `IfNotPresent` to avoid unnecessary pulls.
+
+## LiveKit host network
+
+LiveKit requires host-network access for WebRTC media transport. The
+following ports must be open on the node firewall:
+
+| Port | Protocol | Purpose |
+|------|----------|---------|
+| 7881 | TCP | LiveKit signaling |
+| 50000–60000 | UDP | WebRTC media |
+
+In cloud environments, ensure security groups allow this traffic. On k3s
+with a single node, this typically works out of the box.
+
+## No admin panel
+
+The `stoatchat/service-admin-panel` project exists but is not included in
+this deployment. It requires Authentik for authentication and has private
+submodule dependencies, making it impractical for self-hosting.
+
+Administrative tasks (user management, instance configuration) must be done
+directly via the API or MongoDB.
+
+## Voice upstream status
+
+The `voice-ingress` daemon (LiveKit webhook → MongoDB/RabbitMQ bridge) is
+missing from the official self-hosted Docker Compose setup. Voice
+functionality may be incomplete or broken upstream.
+
+`voice-ingress` is disabled by default (`apps.voiceIngress.enabled: false`).
+Enable it alongside LiveKit if you want to test voice, but expect potential
+issues.

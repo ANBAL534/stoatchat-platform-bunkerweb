@@ -1,0 +1,58 @@
+secretSeed: {{ .Values.secretSeed | quote }}
+secretOverrides: {{ index .Values "secretOverrides" | default dict | toYaml | nindent 2 }}
+domain: {{ .Values.domain | quote }}
+
+hosts:
+  app: {{ .Values._common.hosts.app | quote }}
+  api: {{ .Values._common.hosts.api | quote }}
+  events: {{ .Values._common.hosts.events | quote }}
+  autumn: {{ .Values._common.hosts.autumn | quote }}
+  january: {{ .Values._common.hosts.january | quote }}
+  {{- if .Values.livekit.enabled }}
+  livekit: {{ .Values._common.hosts.livekit | quote }}
+  {{- else }}
+  livekit: ""
+  {{- end }}
+
+mongodb:
+  host: {{ .Values._common.services.mongodb.host | quote }}
+  port: {{ .Values._common.services.mongodb.port }}
+
+redis:
+  host: {{ .Values._common.services.redis.host | quote }}
+  port: {{ .Values._common.services.redis.port }}
+
+rabbitmq:
+  host: {{ .Values._common.services.rabbitmq.host | quote }}
+  port: {{ .Values._common.services.rabbitmq.port }}
+
+s3:
+  endpoint: {{ .Values._common.services.s3.endpoint | quote }}
+  region: {{ if eq .Values._common.services.s3.provider "minio" }}"minio"{{ else }}{{ .Values._common.services.s3.region | default "us-east-1" | quote }}{{ end }}
+  defaultBucket: "revolt-uploads"
+
+smtp:
+  host: {{ .Values.smtp.host | default "" | quote }}
+  port: {{ .Values.smtp.port | default 25 }}
+  username: {{ .Values.smtp.username | default "" | quote }}
+  password: {{ .Values.smtp.password | default "" | quote }}
+  fromAddress: {{ .Values.smtp.fromAddress | default "" | quote }}
+  replyTo: {{ .Values.smtp.replyTo | default "" | quote }}
+  useTls: {{ .Values.smtp.useTls | default false }}
+  useStarttls: {{ .Values.smtp.useStarttls | default false }}
+
+vapid:
+  privateKey: {{ .Values.vapid.privateKey | default "" | quote }}
+  publicKey: {{ .Values.vapid.publicKey | default "" | quote }}
+
+files:
+  encryptionKey: {{ .Values.files.encryptionKey | default "" | quote }}
+
+ingress:
+  className: {{ .Values._common.ingress.className }}
+
+tls:
+  issuer: {{ .Values.tls.issuer | quote }}
+{{- if eq .Values.tls.issuer "letsencrypt" }}
+  email: {{ .Values.adminEmail | quote }}
+{{- end }}

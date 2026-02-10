@@ -1,0 +1,77 @@
+{{- $_ := .Values.secretSeed | required "secretSeed is required" }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: revolt-toml
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "stoat-config.labels" . | nindent 4 }}
+  annotations:
+    {{- include "reflector.annotations" "stoat" | nindent 4 }}
+data:
+  Revolt.toml: |
+    [database]
+    mongodb = "mongodb://stoat:{{ include "getSecret" (dict "seed" .Values.secretSeed "clientId" "mongo-user" "overrides" .Values.secretOverrides) }}@{{ .Values.mongodb.host }}:{{ .Values.mongodb.port }}/revolt"
+    redis = "redis://:{{ include "getSecret" (dict "seed" .Values.secretSeed "clientId" "redis" "overrides" .Values.secretOverrides) }}@{{ .Values.redis.host }}:{{ .Values.redis.port }}/"
+
+    [rabbit]
+    host = "{{ .Values.rabbitmq.host }}"
+    port = {{ .Values.rabbitmq.port }}
+    username = "stoat"
+    password = "{{ include "getSecret" (dict "seed" .Values.secretSeed "clientId" "rabbit-user" "overrides" .Values.secretOverrides) }}"
+
+    [hosts]
+    app = "{{ .Values.hosts.app }}"
+    api = "{{ .Values.hosts.api }}"
+    events = "{{ .Values.hosts.events }}"
+    autumn = "{{ .Values.hosts.autumn }}"
+    january = "{{ .Values.hosts.january }}"
+
+    {{- if .Values.hosts.livekit }}
+    [hosts.livekit]
+    worldwide = "{{ .Values.hosts.livekit }}"
+    {{- end }}
+
+    [api]
+
+    {{- if .Values.smtp.host }}
+    [api.smtp]
+    host = "{{ .Values.smtp.host }}"
+    port = {{ .Values.smtp.port }}
+    username = "{{ .Values.smtp.username }}"
+    password = "{{ .Values.smtp.password }}"
+    from_address = "{{ .Values.smtp.fromAddress }}"
+    {{- if .Values.smtp.replyTo }}
+    reply_to = "{{ .Values.smtp.replyTo }}"
+    {{- end }}
+    use_tls = {{ .Values.smtp.useTls }}
+    use_starttls = {{ .Values.smtp.useStarttls }}
+    {{- end }}
+
+    [api.livekit]
+
+    [api.livekit.nodes.worldwide]
+    url = "http://livekit-livekit-server.stoat-livekit.svc.cluster.local"
+    lat = 0.0
+    lon = 0.0
+    key = "{{ include "getSecret" (dict "seed" .Values.secretSeed "clientId" "livekit-key" "length" 12 "overrides" .Values.secretOverrides) }}"
+    secret = "{{ include "getSecret" (dict "seed" .Values.secretSeed "clientId" "livekit-secret" "overrides" .Values.secretOverrides) }}"
+
+    {{- if .Values.vapid.privateKey }}
+    [pushd.vapid]
+    private_key = "{{ .Values.vapid.privateKey }}"
+    public_key = "{{ .Values.vapid.publicKey }}"
+    {{- end }}
+
+    {{- if .Values.files.encryptionKey }}
+    [files]
+    encryption_key = "{{ .Values.files.encryptionKey }}"
+    {{- end }}
+
+    [files.s3]
+    endpoint = "{{ .Values.s3.endpoint }}"
+    region = "{{ .Values.s3.region }}"
+    access_key_id = "{{ include "getSecret" (dict "seed" .Values.secretSeed "clientId" "s3-access" "overrides" .Values.secretOverrides) }}"
+    secret_access_key = "{{ include "getSecret" (dict "seed" .Values.secretSeed "clientId" "s3-secret" "overrides" .Values.secretOverrides) }}"
+    default_bucket = "{{ .Values.s3.defaultBucket }}"

@@ -1,0 +1,64 @@
+# Secret seed for generating all internal secrets (required)
+secretSeed: ""
+
+# Override individual derived secrets with explicit values.
+# Keys match the clientId used in deriveSecret (e.g. mongo-user, redis, s3-access).
+secretOverrides: {}
+
+# Domain for the platform
+domain: stoat.local
+
+# Public-facing URLs
+hosts:
+  app: ""
+  api: ""
+  events: ""
+  autumn: ""
+  january: ""
+  livekit: ""
+
+# Infrastructure service endpoints
+mongodb:
+  host: stoat-mongodb.stoat-mongodb.svc.cluster.local
+  port: 27017
+
+redis:
+  host: redis-master.stoat-redis.svc.cluster.local
+  port: 6379
+
+rabbitmq:
+  host: stoat-rabbitmq.stoat-rabbitmq.svc.cluster.local
+  port: 5672
+
+s3:
+  endpoint: http://minio.stoat-minio.svc.cluster.local:9000
+  region: minio
+  defaultBucket: revolt-uploads
+
+# SMTP configuration
+smtp:
+  host: ""
+  port: 25
+  username: ""
+  password: ""
+  fromAddress: "noreply@stoat.local"
+  replyTo: ""
+  useTls: false
+  useStarttls: false
+
+# Generated secrets (from *.secret.yaml, not derivable)
+vapid:
+  privateKey: ""
+  publicKey: ""
+
+files:
+  encryptionKey: ""
+
+# TLS configuration
+tls:
+  issuer: selfsigned
+  email: ""
+
+# Ingress configuration
+ingress:
+  className: haproxy

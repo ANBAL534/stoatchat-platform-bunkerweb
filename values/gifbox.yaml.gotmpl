@@ -1,0 +1,18 @@
+appName: stoat-gifbox
+image:
+  repository: ghcr.io/stoatchat/gifbox
+  tag: {{ index (.Values.stoatImageOverrides | default dict) "gifbox" | default .Values.stoatImageTag | quote }}
+
+services:
+  - name: http
+    port: 14706
+    targetPort: 14706
+
+ingress:
+  enabled: true
+  path: /gifbox/
+  pathType: Prefix
+  host: {{ .Values._common.ingress.host }}
+  className: {{ .Values._common.ingress.className }}
+  tlsSecret: {{ .Values._common.ingress.tlsSecret }}
+  tlsIssuer: {{ .Values._common.ingress.tlsIssuer }}

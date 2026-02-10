@@ -1,0 +1,24 @@
+appName: stoat-file-server
+image:
+  repository: ghcr.io/stoatchat/file-server
+  tag: {{ index (.Values.stoatImageOverrides | default dict) "fileServer" | default .Values.stoatImageTag | quote }}
+
+services:
+  - name: http
+    port: 14704
+    targetPort: 14704
+
+{{- if eq .Values._common.services.s3.provider "oos" }}
+env:
+  AWS_REQUEST_CHECKSUM_CALCULATION: WHEN_REQUIRED
+  AWS_RESPONSE_CHECKSUM_VALIDATION: WHEN_REQUIRED
+{{- end }}
+
+ingress:
+  enabled: true
+  path: /autumn/
+  pathType: Prefix
+  host: {{ .Values._common.ingress.host }}
+  className: {{ .Values._common.ingress.className }}
+  tlsSecret: {{ .Values._common.ingress.tlsSecret }}
+  tlsIssuer: {{ .Values._common.ingress.tlsIssuer }}

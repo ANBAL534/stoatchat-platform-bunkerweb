@@ -1,0 +1,12 @@
+appName: stoat-crond
+image:
+  repository: ghcr.io/stoatchat/crond
+  tag: {{ index (.Values.stoatImageOverrides | default dict) "crond" | default .Values.stoatImageTag | quote }}
+
+services: []
+
+{{- if eq .Values._common.services.s3.provider "oos" }}
+env:
+  AWS_REQUEST_CHECKSUM_CALCULATION: WHEN_REQUIRED
+  AWS_RESPONSE_CHECKSUM_VALIDATION: WHEN_REQUIRED
+{{- end }}

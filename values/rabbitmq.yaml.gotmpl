@@ -1,0 +1,26 @@
+{{- define "secret" -}}{{- $seed := index . 0 -}}{{- $id := index . 1 -}}{{- $ov := index . 2 -}}{{- if and $ov (hasKey $ov $id) -}}{{- index $ov $id -}}{{- else -}}{{- printf "%s:%s" $seed $id | sha256sum | trunc 50 -}}{{- end -}}{{- end -}}
+{{- $ov := index .Values "secretOverrides" | default dict -}}
+appName: stoat-rabbitmq
+
+image:
+  repository: rabbitmq
+  tag: "4-management"
+
+services:
+  - name: amqp
+    port: 5672
+    targetPort: 5672
+  - name: management
+    port: 15672
+    targetPort: 15672
+
+mountRevoltToml: false
+
+env:
+  RABBITMQ_DEFAULT_USER: stoat
+  RABBITMQ_DEFAULT_PASS: {{ template "secret" (list .Values.secretSeed "rabbit-user" $ov) }}
+
+persistence:
+  enabled: true
+  mountPath: /var/lib/rabbitmq
+  size: 1Gi

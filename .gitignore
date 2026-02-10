@@ -1,0 +1,27 @@
+# Secrets & credentials
+*.secret.yaml
+*.secret-overrides.yaml
+*.pem
+keys/
+
+# Generated environments (use *.yaml.example as templates)
+environments/*.yaml
+!environments/*.yaml.example
+!environments/*.yaml.gotmpl
+
+# Local clones
+stoat-repos/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Helm / Helmfile
+charts/
+helmfile.lock
