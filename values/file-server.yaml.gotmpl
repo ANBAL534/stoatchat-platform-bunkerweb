@@ -1,7 +1,7 @@
-appName: stoat-file-server
+appName: stoatchat-file-server
 image:
   repository: ghcr.io/stoatchat/file-server
-  tag: {{ index (.Values.stoatImageOverrides | default dict) "fileServer" | default .Values.stoatImageTag | quote }}
+  tag: {{ index (.Values.stoatchatImageOverrides | default dict) "fileServer" | default .Values.stoatchatImageTag | quote }}
 
 services:
   - name: http

@@ -76,7 +76,7 @@ post_deploy() {
     echo "Waiting for LoadBalancer IP..."
     LB_IP=""
     for _ in {1..30}; do
-        LB_IP=$(kubectl get svc haproxy-ingress-kubernetes-ingress -n stoat-ingress -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || true)
+        LB_IP=$(kubectl get svc haproxy-ingress-kubernetes-ingress -n stoatchat-ingress -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || true)
         if [[ -n "${LB_IP}" ]]; then
             break
         fi
@@ -95,8 +95,8 @@ post_deploy() {
     echo "${LB_IP}  ${DOMAIN} livekit.${DOMAIN}"
 
     # Extract CA certificate for self-signed setups
-    CA_FILE="${SCRIPT_DIR}/stoat-ca.pem"
-    kubectl get secret stoat-ca-secret -n stoat-cert-manager -o jsonpath='{.data.tls\.crt}' | base64 -d > "${CA_FILE}" 2>/dev/null || true
+    CA_FILE="${SCRIPT_DIR}/stoatchat-ca.pem"
+    kubectl get secret stoatchat-ca-secret -n stoatchat-cert-manager -o jsonpath='{.data.tls\.crt}' | base64 -d > "${CA_FILE}" 2>/dev/null || true
     if [[ -s "${CA_FILE}" ]]; then
         echo ""
         echo "CA certificate saved to: ${CA_FILE}"
@@ -112,9 +112,9 @@ post_deploy() {
     echo ""
     echo "=== Credentials ==="
     echo ""
-    echo "MongoDB:   stoat / ${MONGO_USER_PASS}"
+    echo "MongoDB:   stoatchat / ${MONGO_USER_PASS}"
     echo "           root password: ${MONGO_ROOT_PASS}"
-    echo "RabbitMQ:  stoat / ${RABBIT_PASS}"
+    echo "RabbitMQ:  stoatchat / ${RABBIT_PASS}"
     echo "           http://${DOMAIN}:15672 (if port-forwarded)"
     echo "MinIO:     ${S3_ACCESS}"
     echo "           ${S3_SECRET}"
@@ -210,7 +210,7 @@ setup_remote() {
     echo "   ${ENV_NAME}:"
     echo "     values:"
     echo "       - versions/infra-versions.yaml"
-    echo "       - versions/stoat-versions.yaml"
+    echo "       - versions/stoatchat-versions.yaml"
     echo "       - environments/${ENV_NAME}.yaml"
     echo "       - environments/vapid.secret.yaml"
     echo "       - environments/files.secret.yaml"
@@ -253,7 +253,7 @@ if [[ "${1}" == "--post-deploy" ]]; then
 fi
 
 echo ""
-echo "=== Stoat Platform - Setup ==="
+echo "=== Stoatchat Platform - Setup ==="
 echo ""
 echo "Select deployment mode:"
 echo ""

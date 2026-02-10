@@ -4,7 +4,7 @@ metadata:
   name: {{ .Values.appName }}
   labels:
     app.kubernetes.io/name: {{ .Values.appName }}
-    app.kubernetes.io/part-of: stoat
+    app.kubernetes.io/part-of: stoatchat
 spec:
   replicas: {{ .Values.replicas }}
   selector:
@@ -14,7 +14,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: {{ .Values.appName }}
-        app.kubernetes.io/part-of: stoat
+        app.kubernetes.io/part-of: stoatchat
     spec:
       containers:
         - name: {{ .Values.appName }}

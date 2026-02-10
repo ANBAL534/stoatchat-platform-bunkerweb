@@ -1,7 +1,7 @@
-appName: stoat-events
+appName: stoatchat-events
 image:
   repository: ghcr.io/stoatchat/events
-  tag: {{ index (.Values.stoatImageOverrides | default dict) "events" | default .Values.stoatImageTag | quote }}
+  tag: {{ index (.Values.stoatchatImageOverrides | default dict) "events" | default .Values.stoatchatImageTag | quote }}
 
 services:
   - name: http

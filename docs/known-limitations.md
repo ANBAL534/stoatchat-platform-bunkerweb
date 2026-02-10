@@ -48,7 +48,7 @@ Bitnami regularly removes specific image tags from Docker Hub with no
 advance notice:
 
 - **RabbitMQ:** all `bitnami/rabbitmq` tags removed. I switched to the
-  official `rabbitmq:4-management` image deployed via the generic stoat-app
+  official `rabbitmq:4-management` image deployed via the generic stoatchat-app
   chart.
 - **MongoDB:** specific tags (`-debian-XX-rN` variants) removed. Only
   `latest` works reliably. The chart forces `image.tag: latest`.
@@ -67,13 +67,13 @@ configuration change:
 helmfile -e local sync
 
 # Restart app pods to pick up the new Revolt.toml
-kubectl rollout restart deployment -n stoat
+kubectl rollout restart deployment -n stoatchat
 ```
 
 ## Client image pull policy
 
 The client image uses tag `dev` (mutable) and `imagePullPolicy: Always` to
-ensure the latest build is always pulled. Other Stoat services use immutable
+ensure the latest build is always pulled. Other Stoatchat services use immutable
 GHCR tags with `IfNotPresent`.
 
 If you switch the client to an immutable tag, you can change the pull policy

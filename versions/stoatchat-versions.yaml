@@ -1,16 +1,16 @@
-# Stoat image tags (from ghcr.io/stoatchat/*)
+# Stoatchat image tags (from ghcr.io/stoatchat/*)
 # All backend images share the same monorepo tag by default.
 # Override individual services only when needed.
-stoatImageTag: "v0.10.3"
+stoatchatImageTag: "v0.10.3"
 
-# Per-service overrides (leave empty to use stoatImageTag)
-stoatImageOverrides: {}
+# Per-service overrides (leave empty to use stoatchatImageTag)
+stoatchatImageOverrides: {}
   # api: "v0.10.2"
   # events: "v0.10.1"
 
 # Client image (custom build from stoatchat/for-web)
 clientImage:
-  repository: "baptisterajaut/stoat-web"
+  repository: "baptisterajaut/stoatchat-web"
   tag: "dev"
 
 # LiveKit - using official upstream image (stoatchat fork is just rebranding)

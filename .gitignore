@@ -10,7 +10,7 @@ environments/*.yaml
 !environments/*.yaml.gotmpl
 
 # Local clones
-stoat-repos/
+stoatchat-repos/
 
 # IDE
 .idea/

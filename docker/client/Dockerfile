@@ -1,4 +1,4 @@
-# Stoat web client (for-web) — self-contained build
+# Stoatchat web client (for-web) — self-contained build
 #
 # Builds the SolidJS client from https://github.com/stoatchat/for-web
 # and serves it via nginx with runtime environment injection.
@@ -9,11 +9,11 @@
 # self-hosting scenarios where the API URL isn't known at build time.
 #
 # Usage:
-#   docker build -t stoat-web docker/client/
-#   docker build --build-arg STOAT_WEB_REF=v1.0.0 -t stoat-web docker/client/
+#   docker build -t stoatchat-web docker/client/
+#   docker build --build-arg STOATCHAT_WEB_REF=v1.0.0 -t stoatchat-web docker/client/
 #
 # Required env at runtime:
-#   REVOLT_PUBLIC_URL   Base API URL (e.g. https://stoat.example.com/api)
+#   REVOLT_PUBLIC_URL   Base API URL (e.g. https://stoatchat.example.com/api)
 #
 # Optional env overrides:
 #   VITE_WS_URL         WebSocket URL (derived from REVOLT_PUBLIC_URL by default)
@@ -29,9 +29,9 @@ RUN corepack enable && corepack prepare pnpm@10.10.0 --activate
 
 WORKDIR /app
 
-ARG STOAT_WEB_REF=main
+ARG STOATCHAT_WEB_REF=main
 ARG CACHE_BUST=1
-RUN git clone --branch ${STOAT_WEB_REF} --recurse-submodules \
+RUN git clone --branch ${STOATCHAT_WEB_REF} --recurse-submodules \
     https://github.com/stoatchat/for-web.git .
 # Assets submodule uses SSH in .gitmodules; clone via HTTPS separately
 RUN rm -rf packages/client/assets && \

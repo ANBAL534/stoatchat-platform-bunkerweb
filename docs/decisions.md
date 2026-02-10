@@ -11,11 +11,11 @@ version files, computed values, and release structure — is adapted from
 (La Suite Numérique), which I authored. This gives me a battle-tested
 foundation for multi-namespace Kubernetes deployments with Helmfile.
 
-## Single generic chart (`stoat-app`)
+## Single generic chart (`stoatchat-app`)
 
-Stoat services have no upstream Helm charts. Rather than creating a chart
+Stoatchat services have no upstream Helm charts. Rather than creating a chart
 per service (which would mean 9 near-identical charts), a single generic
-`helm/stoat-app` chart handles all of them. It provides:
+`helm/stoatchat-app` chart handles all of them. It provides:
 
 - Deployment (with configurable image, ports, env vars, volume mounts)
 - Service
@@ -29,13 +29,13 @@ PVCs, some don't).
 
 ## Revolt.toml as ConfigMap
 
-La Suite configures each app via environment variables. Stoat (Revolt)
+La Suite configures each app via environment variables. Stoatchat (Revolt)
 uses a single shared `Revolt.toml` configuration file read by all backend
 services.
 
-The `stoat-config` chart generates this TOML from Helmfile values via a Go
+The `stoatchat-config` chart generates this TOML from Helmfile values via a Go
 template (`revolt-toml-configmap.yaml`) and stores it as a ConfigMap.
-Reflector replicates it to the `stoat` namespace where app pods mount it.
+Reflector replicates it to the `stoatchat` namespace where app pods mount it.
 
 This is a fundamental difference from lasuite-platform: one shared config
 file vs per-app env vars.
@@ -56,9 +56,9 @@ for the full identifier table and override mechanism.
 
 ## Per-service Ingress with HAProxy merge
 
-Each service defines its own Kubernetes Ingress resource via the `stoat-app`
+Each service defines its own Kubernetes Ingress resource via the `stoatchat-app`
 chart. The HAProxy Ingress controller (haproxytech) merges all Ingress
-resources sharing the same host (`stoat.local`) into a single frontend.
+resources sharing the same host (`stoatchat.local`) into a single frontend.
 Path prefix stripping uses `haproxy.org/path-rewrite` (haproxytech
 annotation). Services mapped to `/` (the client) get no rewrite annotation.
 
@@ -73,18 +73,18 @@ matching the lasuite-platform pattern:
 
 | Namespace | Contents |
 |-----------|----------|
-| `stoat-cert-manager` | cert-manager |
-| `stoat-ingress` | HAProxy Ingress controller |
-| `stoat-reflector` | Reflector |
-| `stoat-mongodb` | MongoDB |
-| `stoat-redis` | Redis |
-| `stoat-rabbitmq` | RabbitMQ |
-| `stoat-minio` | MinIO |
-| `stoat-livekit` | LiveKit server + Ingress |
-| `stoat-config` | stoat-config chart (ConfigMap, ClusterIssuer, namespace creation) |
-| `stoat` | All application services |
+| `stoatchat-cert-manager` | cert-manager |
+| `stoatchat-ingress` | HAProxy Ingress controller |
+| `stoatchat-reflector` | Reflector |
+| `stoatchat-mongodb` | MongoDB |
+| `stoatchat-redis` | Redis |
+| `stoatchat-rabbitmq` | RabbitMQ |
+| `stoatchat-minio` | MinIO |
+| `stoatchat-livekit` | LiveKit server + Ingress |
+| `stoatchat-config` | stoatchat-config chart (ConfigMap, ClusterIssuer, namespace creation) |
+| `stoatchat` | All application services |
 
-The `stoat` namespace is created by the `stoat-config` chart
+The `stoatchat` namespace is created by the `stoatchat-config` chart
 (`namespaces.yaml`) so it exists before app releases deploy into it.
 
 Cross-namespace resources (TLS secrets, ConfigMap) are replicated by
@@ -100,10 +100,10 @@ today is enapter/keydb (multimaster, auth, persistence) but it's been
 dormant since March 2023. Worth revisiting if that changes or a new chart
 appears.
 
-## RabbitMQ — official image via stoat-app
+## RabbitMQ — official image via stoatchat-app
 
 After bitnami removed all `bitnami/rabbitmq` images from Docker Hub,
-RabbitMQ is deployed using the generic `stoat-app` chart with the official
+RabbitMQ is deployed using the generic `stoatchat-app` chart with the official
 `rabbitmq:4-management` image.
 
 ## MongoDB — bitnami with `latest` tag
@@ -121,9 +121,9 @@ for operational details.
 The `stoatchat/livekit-server` fork is just rebranding with minor fixes. I
 use the official upstream chart and image (`livekit/livekit-server`).
 
-The official chart has no built-in ingress support, so the `stoat-config`
+The official chart has no built-in ingress support, so the `stoatchat-config`
 chart creates a dedicated Ingress resource for `livekit.<domain>` in the
-`stoat-livekit` namespace. cert-manager provisions a separate `livekit-tls`
+`stoatchat-livekit` namespace. cert-manager provisions a separate `livekit-tls`
 certificate automatically.
 
 ## Client web image — custom Dockerfile
@@ -143,7 +143,7 @@ build instructions.
 | Element | Reuse level |
 |---------|-------------|
 | `helmfile.yaml.gotmpl` structure | Adapted (different releases) |
-| `environments/` layering | Adapted (Stoat URLs, no Keycloak) |
+| `environments/` layering | Adapted (Stoatchat URLs, no Keycloak) |
 | `versions/` two-file pattern | Same pattern, different versions |
 | Secret derivation (`sha256(seed:id)`) | Same pattern, different IDs |
 | cert-manager chart + values | Near-identical |
@@ -153,5 +153,5 @@ build instructions.
 | MinIO chart + values | Near-identical |
 | LiveKit chart + values | Near-identical (official upstream image) |
 | `init.sh` | Adapted (no Keycloak, no People superuser, added VAPID/file key) |
-| Per-app Helm charts | Replaced by generic `stoat-app` |
-| Platform configuration chart | Adapted → `stoat-config` (Revolt.toml instead of env vars) |
+| Per-app Helm charts | Replaced by generic `stoatchat-app` |
+| Platform configuration chart | Adapted → `stoatchat-config` (Revolt.toml instead of env vars) |

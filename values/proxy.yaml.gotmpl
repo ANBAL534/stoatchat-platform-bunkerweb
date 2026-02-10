@@ -1,7 +1,7 @@
-appName: stoat-proxy
+appName: stoatchat-proxy
 image:
   repository: ghcr.io/stoatchat/proxy
-  tag: {{ index (.Values.stoatImageOverrides | default dict) "proxy" | default .Values.stoatImageTag | quote }}
+  tag: {{ index (.Values.stoatchatImageOverrides | default dict) "proxy" | default .Values.stoatchatImageTag | quote }}
 
 services:
   - name: http

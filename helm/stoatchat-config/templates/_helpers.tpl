@@ -27,14 +27,14 @@ Optional suffix (only appended to derived secrets, not overrides):
 {{/*
 Common labels
 */}}
-{{- define "stoat-config.labels" -}}
+{{- define "stoatchat-config.labels" -}}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-app.kubernetes.io/part-of: stoat
+app.kubernetes.io/part-of: stoatchat
 {{- end -}}
 
 {{/*
 Reflector annotations for cross-namespace secret replication.
-Usage: {{ include "reflector.annotations" "stoat" }}
+Usage: {{ include "reflector.annotations" "stoatchat" }}
 */}}
 {{- define "reflector.annotations" -}}
 reflector.v1.k8s.emberstack.com/reflection-allowed: "true"

@@ -1,7 +1,7 @@
-appName: stoat-api
+appName: stoatchat-api
 image:
   repository: ghcr.io/stoatchat/api
-  tag: {{ index (.Values.stoatImageOverrides | default dict) "api" | default .Values.stoatImageTag | quote }}
+  tag: {{ index (.Values.stoatchatImageOverrides | default dict) "api" | default .Values.stoatchatImageTag | quote }}
 
 services:
   - name: http

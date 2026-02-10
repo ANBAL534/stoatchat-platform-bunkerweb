@@ -3,14 +3,14 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-if [ -z "${STOAT_WEBCLIENT_IMAGE_PUBLISHNAME}" ]; then
-    IMAGE="baptisterajaut/stoat-web"
-    echo "Warning: STOAT_WEBCLIENT_IMAGE_PUBLISHNAME not set, building as ${IMAGE}" >&2
+if [ -z "${STOATCHAT_WEBCLIENT_IMAGE_PUBLISHNAME}" ]; then
+    IMAGE="baptisterajaut/stoatchat-web"
+    echo "Warning: STOATCHAT_WEBCLIENT_IMAGE_PUBLISHNAME not set, building as ${IMAGE}" >&2
 else
-    IMAGE="${STOAT_WEBCLIENT_IMAGE_PUBLISHNAME}"
+    IMAGE="${STOATCHAT_WEBCLIENT_IMAGE_PUBLISHNAME}"
 fi
 TAG="${1:-dev}"
-REF="${STOAT_WEB_REF:-main}"
+REF="${STOATCHAT_WEB_REF:-main}"
 
 if command -v nerdctl &> /dev/null; then
     CTR=nerdctl
@@ -26,7 +26,7 @@ echo "Building ${IMAGE}:${TAG} (ref: ${REF})"
 
 ${CTR} build \
     --platform linux/amd64 \
-    --build-arg STOAT_WEB_REF="${REF}" \
+    --build-arg STOATCHAT_WEB_REF="${REF}" \
     --build-arg CACHE_BUST="$(date +%s)" \
     -t "${IMAGE}:${TAG}" \
     "${SCRIPT_DIR}"

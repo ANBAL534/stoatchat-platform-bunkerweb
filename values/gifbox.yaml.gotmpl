@@ -1,7 +1,7 @@
-appName: stoat-gifbox
+appName: stoatchat-gifbox
 image:
   repository: ghcr.io/stoatchat/gifbox
-  tag: {{ index (.Values.stoatImageOverrides | default dict) "gifbox" | default .Values.stoatImageTag | quote }}
+  tag: {{ index (.Values.stoatchatImageOverrides | default dict) "gifbox" | default .Values.stoatchatImageTag | quote }}
 
 services:
   - name: http

@@ -5,7 +5,7 @@ metadata:
   name: {{ .Values.appName }}
   labels:
     app.kubernetes.io/name: {{ .Values.appName }}
-    app.kubernetes.io/part-of: stoat
+    app.kubernetes.io/part-of: stoatchat
 spec:
   type: ClusterIP
   selector:

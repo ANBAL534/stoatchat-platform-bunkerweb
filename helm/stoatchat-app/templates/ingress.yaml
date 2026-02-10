@@ -6,7 +6,7 @@ metadata:
   name: {{ .Values.appName }}
   labels:
     app.kubernetes.io/name: {{ .Values.appName }}
-    app.kubernetes.io/part-of: stoat
+    app.kubernetes.io/part-of: stoatchat
   annotations:
     {{- if .Values.ingress.tlsIssuer }}
     cert-manager.io/cluster-issuer: {{ .Values.ingress.tlsIssuer }}

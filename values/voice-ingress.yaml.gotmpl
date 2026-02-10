@@ -1,7 +1,7 @@
-appName: stoat-voice-ingress
+appName: stoatchat-voice-ingress
 image:
   repository: ghcr.io/stoatchat/voice-ingress
-  tag: {{ index (.Values.stoatImageOverrides | default dict) "voiceIngress" | default .Values.stoatImageTag | quote }}
+  tag: {{ index (.Values.stoatchatImageOverrides | default dict) "voiceIngress" | default .Values.stoatchatImageTag | quote }}
 
 services:
   - name: http

@@ -4,30 +4,30 @@
 {{- $s3 := index .Values "s3" | default dict }}
 {{- $ingress := index .Values "ingress" | default dict }}
 {{- $tls := index .Values "tls" | default dict }}
-{{- $domain := index .Values "domain" | default "stoat.local" }}
+{{- $domain := index .Values "domain" | default "stoatchat.local" }}
 
 _common:
   services:
     mongodb:
-      host: {{ index $mongodb "host" | default "stoat-mongodb.stoat-mongodb.svc.cluster.local" }}
+      host: {{ index $mongodb "host" | default "stoatchat-mongodb.stoatchat-mongodb.svc.cluster.local" }}
       port: {{ index $mongodb "port" | default 27017 }}
     redis:
-      host: {{ index $redis "host" | default "redis-master.stoat-redis.svc.cluster.local" }}
+      host: {{ index $redis "host" | default "redis-master.stoatchat-redis.svc.cluster.local" }}
       port: {{ index $redis "port" | default 6379 }}
     rabbitmq:
-      host: {{ index $rabbitmq "host" | default "stoat-rabbitmq.stoat-rabbitmq.svc.cluster.local" }}
+      host: {{ index $rabbitmq "host" | default "stoatchat-rabbitmq.stoatchat-rabbitmq.svc.cluster.local" }}
       port: {{ index $rabbitmq "port" | default 5672 }}
     s3:
       provider: {{ index $s3 "provider" | default "minio" }}
-      endpoint: {{ index $s3 "endpoint" | default "http://minio.stoat-minio.svc.cluster.local:9000" }}
+      endpoint: {{ index $s3 "endpoint" | default "http://minio.stoatchat-minio.svc.cluster.local:9000" }}
       region: {{ index $s3 "region" | default "" }}
-      host: {{ index $s3 "host" | default "minio.stoat-minio.svc.cluster.local" }}
+      host: {{ index $s3 "host" | default "minio.stoatchat-minio.svc.cluster.local" }}
       port: {{ index $s3 "port" | default 9000 }}
 
   ingress:
     className: {{ index $ingress "className" | default "haproxy" | quote }}
     host: {{ $domain }}
-    tlsSecret: stoat-tls
+    tlsSecret: stoatchat-tls
     tlsIssuer: {{ index $tls "issuer" | default "selfsigned" }}
 
   # Public URLs (used in Revolt.toml [hosts] section)

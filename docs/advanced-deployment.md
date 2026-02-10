@@ -1,6 +1,6 @@
 # Advanced Deployment
 
-This guide explains how to deploy Stoat with existing infrastructure (MongoDB, Redis, RabbitMQ, S3).
+This guide explains how to deploy Stoatchat with existing infrastructure (MongoDB, Redis, RabbitMQ, S3).
 
 ## Table of Contents
 
@@ -73,7 +73,7 @@ environments:
   my-env:
     values:
       - versions/infra-versions.yaml
-      - versions/stoat-versions.yaml
+      - versions/stoatchat-versions.yaml
       - environments/my-env.yaml
       - environments/my-env.secret-overrides.yaml  # Add this
       - environments/vapid.secret.yaml
@@ -107,7 +107,7 @@ This means you can mix derived and custom secrets:
 
 ### K8s Secret Resources
 
-The `stoat-config` chart also creates standalone K8s `Secret` resources
+The `stoatchat-config` chart also creates standalone K8s `Secret` resources
 (`mongodb-credentials`, `redis-credentials`, `rabbitmq-credentials`,
 `s3-credentials`, `livekit-credentials`) that are replicated via Reflector
 to the relevant namespaces. These respect `secretOverrides` and can be
@@ -122,7 +122,7 @@ consumed by external tools (backup scripts, monitoring, operators).
 ```js
 use revolt
 db.createUser({
-  user: "stoat",
+  user: "stoatchat",
   pwd: "your_mongo_password",
   roles: [{ role: "readWrite", db: "revolt" }]
 })
@@ -173,7 +173,7 @@ secretOverrides:
 ```
 
 > **Note**: LiveKit also uses Redis. If you use an external Redis, the same
-> password is used for both Stoat services and LiveKit.
+> password is used for both Stoatchat services and LiveKit.
 
 ---
 
@@ -182,8 +182,8 @@ secretOverrides:
 ### 1. Create the user and vhost
 
 ```bash
-rabbitmqctl add_user stoat your_rabbit_password
-rabbitmqctl set_permissions -p / stoat ".*" ".*" ".*"
+rabbitmqctl add_user stoatchat your_rabbit_password
+rabbitmqctl set_permissions -p / stoatchat ".*" ".*" ".*"
 ```
 
 ### 2. Configure the environment
@@ -287,7 +287,7 @@ livekit:
 
 The LiveKit internal URL in `Revolt.toml` defaults to the in-cluster service.
 For an external LiveKit, you will need to override the `[api.livekit.nodes.worldwide]`
-section. Currently this requires modifying `values/stoat-config.yaml.gotmpl`
+section. Currently this requires modifying `values/stoatchat-config.yaml.gotmpl`
 to pass through the external LiveKit URL.
 
 ### 2. Set the credentials
@@ -325,7 +325,7 @@ Edit `environments/<name>.yaml` to adjust:
 # Infrastructure - set to false if using external services
 mongodb:
   enabled: true   # false if external MongoDB
-  host: stoat-mongodb.stoat-mongodb.svc.cluster.local
+  host: stoatchat-mongodb.stoatchat-mongodb.svc.cluster.local
 
 redis:
   enabled: true   # false if external Redis
@@ -380,7 +380,7 @@ Check if the service can reach its dependencies:
 ```bash
 # Test MongoDB connectivity
 kubectl run test --rm -it --image=mongo:latest -- \
-  mongosh "mongodb://stoat:<password>@<host>:27017/revolt"
+  mongosh "mongodb://stoatchat:<password>@<host>:27017/revolt"
 
 # Test Redis connectivity
 kubectl run test --rm -it --image=redis:alpine -- \
@@ -388,7 +388,7 @@ kubectl run test --rm -it --image=redis:alpine -- \
 
 # Test RabbitMQ connectivity
 kubectl run test --rm -it --image=curlimages/curl -- \
-  curl -u stoat:<password> http://<host>:15672/api/overview
+  curl -u stoatchat:<password> http://<host>:15672/api/overview
 ```
 
 ### Retrieve a derived secret

@@ -4,7 +4,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: livekit-server
-  namespace: stoat-livekit
+  namespace: stoatchat-livekit
   labels:
     app.kubernetes.io/name: livekit-server
     app.kubernetes.io/managed-by: Helm

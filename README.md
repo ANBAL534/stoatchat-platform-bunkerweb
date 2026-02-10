@@ -1,4 +1,4 @@
-# Stoat Platform — Self-Hosting on Kubernetes
+# StoatChat Platform — Self-Hosting on Kubernetes
 
 Self-host [Stoatchat](https://github.com/stoatchat) on Kubernetes using Helmfile.
 
@@ -29,7 +29,7 @@ All services run behind a single domain with path-based routing via HAProxy
 Ingress. LiveKit uses a separate subdomain.
 
 ```
-stoat.local
+stoatchat.local
   /api/*      →  api (REST)
   /ws         →  events (WebSocket)
   /autumn/*   →  file-server (uploads)
@@ -37,12 +37,12 @@ stoat.local
   /gifbox/*   →  gifbox (GIF proxy)
   /*          →  client (web UI)
 
-livekit.stoat.local
+livekit.stoatchat.local
   /*          →  livekit-server (WebRTC)
 ```
 
 Backend services share a single `Revolt.toml` configuration file, generated
-as a Kubernetes ConfigMap by the `stoat-config` chart and replicated across
+as a Kubernetes ConfigMap by the `stoatchat-config` chart and replicated across
 namespaces via Reflector.
 
 ## Prerequisites
@@ -79,18 +79,18 @@ For local mode, `init.sh`:
 5. Pauses for you to review `environments/local.yaml`
 6. Runs `helmfile -e local sync` (deploys all releases)
 7. Prints the LoadBalancer IP and `/etc/hosts` entry
-8. Exports the self-signed CA certificate to `stoat-ca.pem`
+8. Exports the self-signed CA certificate to `stoatchat-ca.pem`
 
 After the script completes:
 
 ```bash
 # Add to /etc/hosts (use the IP printed by init.sh)
-<LB_IP>  stoat.local livekit.stoat.local
+<LB_IP>  stoatchat.local livekit.stoatchat.local
 
 # Trust the CA certificate (see TLS section below)
 ```
 
-Open `https://stoat.local` and create an account.
+Open `https://stoatchat.local` and create an account.
 
 ### Post-deploy only
 
@@ -112,7 +112,7 @@ already provided there:
 # my-instance:
 #   values:
 #     - versions/infra-versions.yaml
-#     - versions/stoat-versions.yaml
+#     - versions/stoatchat-versions.yaml
 #     - environments/my-instance.yaml
 #     - environments/my-instance.secret-overrides.yaml  # optional
 #     - environments/vapid.secret.yaml
@@ -165,7 +165,7 @@ Primary configuration file. Created from `local.yaml.example` by `init.sh`.
 
 | Key | Default | Description |
 |-----|---------|-------------|
-| `domain` | `stoat.local` | Base domain for all services |
+| `domain` | `stoatchat.local` | Base domain for all services |
 | `secretSeed` | (generated) | Master seed for deterministic secret derivation |
 | `apps.<name>.enabled` | `true`/`false` | Toggle individual services |
 | `livekit.enabled` | `false` | Enable LiveKit voice/video (requires extra config) |
@@ -199,8 +199,8 @@ apps:
 ```
 
 LiveKit requires host-network access with UDP ports 50000–60000 and TCP
-port 7881 open on the node firewall. A separate `livekit.stoat.local`
-Ingress is automatically created by the `stoat-config` chart.
+port 7881 open on the node firewall. A separate `livekit.stoatchat.local`
+Ingress is automatically created by the `stoatchat-config` chart.
 
 ### SMTP
 
@@ -214,7 +214,7 @@ smtp:
   port: 587
   username: "user"
   password: "pass"
-  fromAddress: "noreply@stoat.example.com"
+  fromAddress: "noreply@stoatchat.example.com"
   useTls: false
   useStarttls: true
 ```
@@ -252,7 +252,7 @@ Build and push:
 docker/client/build.sh
 
 # Specific ref
-STOAT_WEB_REF=v1.0.0 docker/client/build.sh
+STOATCHAT_WEB_REF=v1.0.0 docker/client/build.sh
 
 # Custom tag
 docker/client/build.sh v1.0.0
@@ -268,13 +268,13 @@ The script auto-detects `nerdctl` or `docker` and prompts before pushing.
 
 | URL | Service |
 |-----|---------|
-| `https://stoat.local` | Web client |
-| `https://stoat.local/api` | REST API |
-| `https://stoat.local/ws` | WebSocket events |
-| `https://stoat.local/autumn` | File server |
-| `https://stoat.local/january` | Metadata proxy |
-| `https://stoat.local/gifbox` | GIF proxy |
-| `wss://livekit.stoat.local` | LiveKit (if enabled) |
+| `https://stoatchat.local` | Web client |
+| `https://stoatchat.local/api` | REST API |
+| `https://stoatchat.local/ws` | WebSocket events |
+| `https://stoatchat.local/autumn` | File server |
+| `https://stoatchat.local/january` | Metadata proxy |
+| `https://stoatchat.local/gifbox` | GIF proxy |
+| `wss://livekit.stoatchat.local` | LiveKit (if enabled) |
 
 Create an account at the web client URL. Without SMTP configured, email
 verification is skipped and accounts are immediately usable.
@@ -283,42 +283,42 @@ verification is skipped and accounts are immediately usable.
 
 | Component | Chart | Namespace | Notes |
 |-----------|-------|-----------|-------|
-| MongoDB | bitnami/mongodb | `stoat-mongodb` | Primary database |
-| Redis | bitnami/redis | `stoat-redis` | Event broker and KV store |
-| RabbitMQ | stoat-app (official image) | `stoat-rabbitmq` | Message broker |
-| MinIO | minio/minio | `stoat-minio` | S3-compatible object storage |
-| LiveKit | livekit/livekit-server | `stoat-livekit` | WebRTC server (optional) |
-| cert-manager | jetstack/cert-manager | `stoat-cert-manager` | TLS certificate management |
-| HAProxy | haproxytech/kubernetes-ingress | `stoat-ingress` | Ingress controller |
-| Reflector | emberstack/reflector | `stoat-reflector` | Cross-namespace secret replication |
+| MongoDB | bitnami/mongodb | `stoatchat-mongodb` | Primary database |
+| Redis | bitnami/redis | `stoatchat-redis` | Event broker and KV store |
+| RabbitMQ | stoatchat-app (official image) | `stoatchat-rabbitmq` | Message broker |
+| MinIO | minio/minio | `stoatchat-minio` | S3-compatible object storage |
+| LiveKit | livekit/livekit-server | `stoatchat-livekit` | WebRTC server (optional) |
+| cert-manager | jetstack/cert-manager | `stoatchat-cert-manager` | TLS certificate management |
+| HAProxy | haproxytech/kubernetes-ingress | `stoatchat-ingress` | Ingress controller |
+| Reflector | emberstack/reflector | `stoatchat-reflector` | Cross-namespace secret replication |
 
-All Stoat application services (api, events, file-server, etc.) deploy into
-the `stoat` namespace using the generic `helm/stoat-app` chart.
+All Stoatchat application services (api, events, file-server, etc.) deploy into
+the `stoatchat` namespace using the generic `helm/stoatchat-app` chart.
 
 ## TLS / CA Certificate
 
 With `tls.issuer: selfsigned`, cert-manager generates a local CA. Browsers
 will show certificate warnings until the CA is trusted.
 
-The CA certificate is exported to `stoat-ca.pem` by `init.sh`. You can also
+The CA certificate is exported to `stoatchat-ca.pem` by `init.sh`. You can also
 extract it manually:
 
 ```bash
-kubectl get secret stoat-ca-secret -n stoat-cert-manager \
-  -o jsonpath='{.data.tls\.crt}' | base64 -d > stoat-ca.pem
+kubectl get secret stoatchat-ca-secret -n stoatchat-cert-manager \
+  -o jsonpath='{.data.tls\.crt}' | base64 -d > stoatchat-ca.pem
 ```
 
 ### macOS
 
 ```bash
 sudo security add-trusted-cert -d -r trustRoot \
-  -k /Library/Keychains/System.keychain stoat-ca.pem
+  -k /Library/Keychains/System.keychain stoatchat-ca.pem
 ```
 
 ### Linux (Debian/Ubuntu)
 
 ```bash
-sudo cp stoat-ca.pem /usr/local/share/ca-certificates/stoat-ca.crt
+sudo cp stoatchat-ca.pem /usr/local/share/ca-certificates/stoatchat-ca.crt
 sudo update-ca-certificates
 ```
 
@@ -327,13 +327,13 @@ sudo update-ca-certificates
 PowerShell (requires admin):
 
 ```powershell
-Import-Certificate -FilePath "stoat-ca.pem" -CertStoreLocation Cert:\LocalMachine\Root
+Import-Certificate -FilePath "stoatchat-ca.pem" -CertStoreLocation Cert:\LocalMachine\Root
 ```
 
 Or with certutil:
 
 ```cmd
-certutil.exe -addstore root stoat-ca.pem
+certutil.exe -addstore root stoatchat-ca.pem
 ```
 
 You can also import via the GUI: Chrome → Settings → Privacy and security →
@@ -342,7 +342,7 @@ the Start menu.
 
 ### Firefox
 
-Firefox uses its own certificate store. Import `stoat-ca.pem` via
+Firefox uses its own certificate store. Import `stoatchat-ca.pem` via
 Settings → Privacy & Security → Certificates → View Certificates →
 Authorities → Import.
 
@@ -357,7 +357,7 @@ Authorities → Import.
 This project is inspired by the official
 [stoatchat/self-hosted](https://github.com/stoatchat/self-hosted) Docker
 Compose setup and adapts it for Kubernetes. I am not affiliated with the
-Stoat/Revolt project.
+Stoatchat/Revolt project.
 
 The Helmfile structure, infrastructure charts, secret derivation pattern,
 and deployment tooling are directly adapted from

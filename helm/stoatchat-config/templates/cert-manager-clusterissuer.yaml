@@ -10,12 +10,12 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: stoat-ca
-  namespace: stoat-cert-manager
+  name: stoatchat-ca
+  namespace: stoatchat-cert-manager
 spec:
   isCA: true
-  commonName: stoat-ca
-  secretName: stoat-ca-secret
+  commonName: stoatchat-ca
+  secretName: stoatchat-ca-secret
   duration: 87600h
   privateKey:
     algorithm: ECDSA
@@ -31,7 +31,7 @@ metadata:
   name: selfsigned
 spec:
   ca:
-    secretName: stoat-ca-secret
+    secretName: stoatchat-ca-secret
 {{- end }}
 
 {{- if eq .Values.tls.issuer "letsencrypt" }}

@@ -6,7 +6,7 @@ secretSeed: ""
 secretOverrides: {}
 
 # Domain for the platform
-domain: stoat.local
+domain: stoatchat.local
 
 # Public-facing URLs
 hosts:
@@ -19,19 +19,19 @@ hosts:
 
 # Infrastructure service endpoints
 mongodb:
-  host: stoat-mongodb.stoat-mongodb.svc.cluster.local
+  host: stoatchat-mongodb.stoatchat-mongodb.svc.cluster.local
   port: 27017
 
 redis:
-  host: redis-master.stoat-redis.svc.cluster.local
+  host: redis-master.stoatchat-redis.svc.cluster.local
   port: 6379
 
 rabbitmq:
-  host: stoat-rabbitmq.stoat-rabbitmq.svc.cluster.local
+  host: stoatchat-rabbitmq.stoatchat-rabbitmq.svc.cluster.local
   port: 5672
 
 s3:
-  endpoint: http://minio.stoat-minio.svc.cluster.local:9000
+  endpoint: http://minio.stoatchat-minio.svc.cluster.local:9000
   region: minio
   defaultBucket: revolt-uploads
 
@@ -41,7 +41,7 @@ smtp:
   port: 25
   username: ""
   password: ""
-  fromAddress: "noreply@stoat.local"
+  fromAddress: "noreply@stoatchat.local"
   replyTo: ""
   useTls: false
   useStarttls: false
