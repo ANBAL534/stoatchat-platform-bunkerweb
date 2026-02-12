@@ -209,12 +209,12 @@ setup_remote() {
     echo ""
     echo "   ${ENV_NAME}:"
     echo "     values:"
+    echo "       - environments/_defaults.yaml"
     echo "       - versions/infra-versions.yaml"
     echo "       - versions/stoatchat-versions.yaml"
     echo "       - environments/${ENV_NAME}.yaml"
     echo "       - environments/vapid.secret.yaml"
     echo "       - environments/files.secret.yaml"
-    echo "       - environments/_computed.yaml.gotmpl"
     echo "       # Optional: uncomment if using secret overrides"
     echo "       # - environments/${ENV_NAME}.secret-overrides.yaml"
     echo ""
@@ -236,8 +236,14 @@ setup_remote() {
     echo ""
 }
 
+# ---------------------------------------------------------------------------
+# Main — only runs when executed directly, not when sourced
+# ---------------------------------------------------------------------------
+
+[[ "${BASH_SOURCE[0]}" != "${0}" ]] && return 0
+
 # --post-deploy: skip config generation and helmfile sync, run post-deploy only
-if [[ "${1}" == "--post-deploy" ]]; then
+if [[ "${1:-}" == "--post-deploy" ]]; then
     ENV_FILE="${SCRIPT_DIR}/environments/local.yaml"
     if [[ ! -f "${ENV_FILE}" ]]; then
         echo "Error: ${ENV_FILE} not found. Run ./init.sh first."

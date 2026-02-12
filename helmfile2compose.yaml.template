@@ -1,0 +1,44 @@
+# Configuration descriptor for https://github.com/baptisterajaut/helmfile2compose
+
+helmfile2ComposeVersion: v1
+name: stoat
+volume_root: __VOLUME_ROOT__
+volumes:
+  minio:
+    host_path: minio
+  stoatchat-mongodb:
+    host_path: mongodb
+  stoatchat-rabbitmq-data:
+    host_path: rabbitmq
+exclude:
+- cert-manager-cainjector
+- cert-manager
+- cert-manager-webhook
+- haproxy-ingress-kubernetes-ingress
+- reflector
+replacements:
+- old: http://livekit-livekit-server
+  new: http://livekit-livekit-server:7880
+- old: path_style_buckets = false
+  new: path_style_buckets = true
+services:
+  minio-init:
+    image: quay.io/minio/mc:RELEASE.2024-11-21T17-21-54Z
+    restart: on-failure
+    entrypoint:
+    - /bin/sh
+    - -c
+    command:
+    - mc alias set local http://minio:9000 $secret:minio:rootUser $secret:minio:rootPassword
+      && mc mb --ignore-existing local/revolt-uploads
+overrides:
+  redis-master:
+    image: redis:7-alpine
+    entrypoint: null
+    command:
+    - redis-server
+    - --requirepass
+    - $secret:redis:redis-password
+    volumes:
+    - $volume_root/redis:/data
+    environment: null

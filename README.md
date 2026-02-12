@@ -1,25 +1,22 @@
-# StoatChat Platform — Self-Hosting on Kubernetes
+# StoatChat Platform
 
-Self-host [Stoatchat](https://github.com/stoatchat) on Kubernetes using Helmfile.
+Self-host [Stoatchat](https://github.com/stoatchat) on Kubernetes using
+Helmfile, or on a single machine with Docker Compose.
 
-> **Looking for something simpler?** The official
-> [self-hosted Docker Compose](https://github.com/stoatchat/self-hosted)
-> does not require a Kubernetes cluster and is easier to get started with.
+> **No Kubernetes cluster?** See [Deploy with Compose](docs/compose-deployment.md).
+> The official Docker Compose setup is
+> [stoatchat/self-hosted](https://github.com/stoatchat/self-hosted).
 
-The official self-hosted repo is
-[awaiting updates](https://github.com/stoatchat/self-hosted/issues/176),
-so as [suggested there](https://github.com/stoatchat/self-hosted/issues/176#issuecomment-2668227771)
-I built this Helmfile alternative while deploying my own instance. Not
-meant to replace Docker Compose — just a Kubernetes-native option for
-those who prefer it.
+The [official self-hosted repo](https://github.com/stoatchat/self-hosted/issues/176)
+is awaiting updates, so as
+[suggested there](https://github.com/stoatchat/self-hosted/issues/176#issuecomment-2668227771)
+I built this Helmfile alternative while deploying my own instance. The same
+charts work for local development, production clusters, and
+[Compose generation](docs/compose-deployment.md) — one source of truth
+for all deployment targets.
 
-The same manifests work for local development and production clusters,
-avoiding the need to maintain two deployment methods. This is a **reference
-implementation**: monitoring, GitOps, and security policies are left to
-cluster operators. A tutorial for Rancher Desktop (Windows/Mac) and k3s
-(Linux) is planned.
-
-Architecture and tooling adapted from
+This is a **reference implementation**: monitoring, GitOps, and security
+policies are left to operators. Architecture and tooling adapted from
 [lasuite-platform](https://github.com/baptisterajaut/lasuite-platform)
 (La Suite Numérique).
 
@@ -113,11 +110,13 @@ already provided there:
 #   values:
 #     - versions/infra-versions.yaml
 #     - versions/stoatchat-versions.yaml
+#     - environments/_defaults.yaml
+#     - versions/infra-versions.yaml
+#     - versions/stoatchat-versions.yaml
 #     - environments/my-instance.yaml
 #     - environments/my-instance.secret-overrides.yaml  # optional
 #     - environments/vapid.secret.yaml
 #     - environments/files.secret.yaml
-#     - environments/_computed.yaml.gotmpl
 ```
 
 See [Advanced deployment](docs/advanced-deployment.md) for external
@@ -168,19 +167,24 @@ Primary configuration file. Created from `local.yaml.example` by `init.sh`.
 | `domain` | `stoatchat.local` | Base domain for all services |
 | `secretSeed` | (generated) | Master seed for deterministic secret derivation |
 | `apps.<name>.enabled` | `true`/`false` | Toggle individual services |
+| `apps.gifbox.tenorKey` | `""` | Tenor API key — required when gifbox is enabled ([get one](https://developers.google.com/tenor)) |
 | `livekit.enabled` | `false` | Enable LiveKit voice/video (requires extra config) |
+| `livekit.rtcPortRangeStart` | `50000` | First UDP port for WebRTC media |
+| `livekit.rtcPortRangeEnd` | `60000` | Last UDP port for WebRTC media |
 | `tls.issuer` | `selfsigned` | TLS issuer: `selfsigned` or `letsencrypt` |
 | `smtp.host` | `""` | SMTP server for email verification (empty = disabled) |
 
 ### App toggles
 
-All apps default to enabled except `voiceIngress` (requires LiveKit) and
-`livekit` itself. Disable services you don't need:
+All apps default to enabled except `gifbox` (requires a
+[Tenor API key](https://developers.google.com/tenor)),
+`voiceIngress` (requires LiveKit), and `livekit` itself:
 
 ```yaml
 apps:
   gifbox:
-    enabled: false    # disable GIF proxy
+    enabled: true
+    tenorKey: "your-tenor-api-key"   # required when gifbox is enabled
   voiceIngress:
     enabled: true     # enable after livekit is enabled
 ```
@@ -198,9 +202,11 @@ apps:
     enabled: true
 ```
 
-LiveKit requires host-network access with UDP ports 50000–60000 and TCP
-port 7881 open on the node firewall. A separate `livekit.stoatchat.local`
-Ingress is automatically created by the `stoatchat-config` chart.
+LiveKit requires host-network access for WebRTC media. The UDP port range
+defaults to 50000–60000 (configurable via `livekit.rtcPortRangeStart` /
+`rtcPortRangeEnd`). TCP port 7881 must also be open. A separate
+`livekit.stoatchat.local` Ingress is automatically created by the
+`stoatchat-config` chart.
 
 ### SMTP
 
@@ -350,6 +356,7 @@ Authorities → Import.
 
 ## Documentation
 
+- [Deploy with Compose](docs/compose-deployment.md) — run without Kubernetes using `generate-compose.sh`
 - [Advanced deployment](docs/advanced-deployment.md) — external infrastructure, secret overrides, production guide
 - [Architecture decisions](docs/decisions.md)
 - [Known limitations](docs/known-limitations.md)

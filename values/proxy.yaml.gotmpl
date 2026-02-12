@@ -12,7 +12,7 @@ ingress:
   enabled: true
   path: /january/
   pathType: Prefix
-  host: {{ .Values._common.ingress.host }}
-  className: {{ .Values._common.ingress.className }}
-  tlsSecret: {{ .Values._common.ingress.tlsSecret }}
-  tlsIssuer: {{ .Values._common.ingress.tlsIssuer }}
+  host: {{ .Values.domain }}
+  className: {{ .Values.ingress.className }}
+  tlsSecret: {{ .Values.tls.secretName }}
+  tlsIssuer: {{ .Values.tls.issuer }}

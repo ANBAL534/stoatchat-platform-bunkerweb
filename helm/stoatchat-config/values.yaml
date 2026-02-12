@@ -15,7 +15,13 @@ hosts:
   events: ""
   autumn: ""
   january: ""
+  gifbox: ""
   livekit: ""
+
+# Gifbox (GIF search via Tenor)
+gifbox:
+  enabled: false
+  tenorKey: ""  # required when gifbox.enabled is true — get one at https://developers.google.com/tenor
 
 # Infrastructure service endpoints
 mongodb:

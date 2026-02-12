@@ -1,0 +1,26 @@
+domain: __DOMAIN__
+
+apps:
+  voiceIngress:
+    enabled: __VOICE_ENABLED__
+
+livekit:
+  enabled: __VOICE_ENABLED__
+  rtcPortRangeStart: 50000
+  rtcPortRangeEnd: 50100
+
+# K8s-only infra — disabled for compose (Caddy handles TLS + reverse proxy)
+ingress:
+  enabled: false
+
+certManager:
+  enabled: false
+
+reflector:
+  enabled: false
+
+smtp:
+  fromAddress: "noreply@__DOMAIN__"
+
+# Generate with: openssl rand -hex 24
+secretSeed: "__SECRET_SEED__"

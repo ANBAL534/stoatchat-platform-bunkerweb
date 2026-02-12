@@ -10,7 +10,7 @@ apps:
   proxy:
     enabled: true
   gifbox:
-    enabled: true
+    enabled: false
   crond:
     enabled: true
   pushd:

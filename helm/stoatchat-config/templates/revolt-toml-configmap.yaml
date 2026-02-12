@@ -27,6 +27,9 @@ data:
     events = "{{ .Values.hosts.events }}"
     autumn = "{{ .Values.hosts.autumn }}"
     january = "{{ .Values.hosts.january }}"
+    {{- if .Values.gifbox.enabled }}
+    gifbox = "{{ .Values.hosts.gifbox }}"
+    {{- end }}
 
     {{- if .Values.hosts.livekit }}
     [hosts.livekit]
@@ -34,6 +37,11 @@ data:
     {{- end }}
 
     [api]
+
+    {{- if .Values.gifbox.enabled }}
+    [api.security]
+    tenor_key = "{{ .Values.gifbox.tenorKey | required "gifbox.tenorKey is required when gifbox is enabled" }}"
+    {{- end }}
 
     {{- if .Values.smtp.host }}
     [api.smtp]
@@ -71,6 +79,7 @@ data:
 
     [files.s3]
     endpoint = "{{ .Values.s3.endpoint }}"
+    path_style_buckets = {{ .Values.s3.pathStyleBuckets | default false }}
     region = "{{ .Values.s3.region }}"
     access_key_id = "{{ include "getSecret" (dict "seed" .Values.secretSeed "clientId" "s3-access" "overrides" .Values.secretOverrides) }}"
     secret_access_key = "{{ include "getSecret" (dict "seed" .Values.secretSeed "clientId" "s3-secret" "overrides" .Values.secretOverrides) }}"

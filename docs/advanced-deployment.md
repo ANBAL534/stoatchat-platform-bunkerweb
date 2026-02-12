@@ -31,7 +31,7 @@ This means that using the same `secretSeed` will always produce the same secrets
 To compute a specific secret:
 
 ```bash
-SEED=$(grep secretSeed environments/local.yaml | cut -d'"' -f2)
+SEED=$(grep secretSeed environments/<env>.yaml | cut -d'"' -f2)
 echo -n "${SEED}:mongo-user" | shasum -a 256 | cut -c1-50
 ```
 
@@ -72,13 +72,13 @@ Then add this file to your environment in `helmfile.yaml.gotmpl`:
 environments:
   my-env:
     values:
+      - environments/_defaults.yaml
       - versions/infra-versions.yaml
       - versions/stoatchat-versions.yaml
       - environments/my-env.yaml
       - environments/my-env.secret-overrides.yaml  # Add this
       - environments/vapid.secret.yaml
       - environments/files.secret.yaml
-      - environments/_computed.yaml.gotmpl
 ```
 
 ### Method 2: Inline in environment file

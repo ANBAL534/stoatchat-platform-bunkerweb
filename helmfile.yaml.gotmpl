@@ -30,23 +30,32 @@ helmDefaults:
 environments:
   local:
     values:
+      - environments/_defaults.yaml
       - versions/infra-versions.yaml
       - versions/stoatchat-versions.yaml
       - environments/local.yaml
       - environments/vapid.secret.yaml
       - environments/files.secret.yaml
-      - environments/_computed.yaml.gotmpl
+
+  compose:
+    values:
+      - environments/_defaults.yaml
+      - versions/infra-versions.yaml
+      - versions/stoatchat-versions.yaml
+      - environments/compose.yaml
+      - environments/vapid.secret.yaml
+      - environments/files.secret.yaml
 
   # Template for remote deployments — copy and adapt:
   # my-instance:
   #   values:
+  #     - environments/_defaults.yaml
   #     - versions/infra-versions.yaml
   #     - versions/stoatchat-versions.yaml
   #     - environments/my-instance.yaml
   #     - environments/my-instance.secret-overrides.yaml  # optional
   #     - environments/vapid.secret.yaml
   #     - environments/files.secret.yaml
-  #     - environments/_computed.yaml.gotmpl
 
 ---
 # ===========================================

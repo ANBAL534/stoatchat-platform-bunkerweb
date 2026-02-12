@@ -35,7 +35,7 @@ be aware of the inconsistency.
 
 ## SMTP disabled = no email verification
 
-When `smtp.host` is empty in `local.yaml`, the `[api.smtp]` section is
+When `smtp.host` is empty in the environment file, the `[api.smtp]` section is
 omitted from `Revolt.toml` entirely. The API then skips email verification
 and accounts are immediately usable after creation.
 
@@ -87,7 +87,7 @@ following ports must be open on the node firewall:
 | Port | Protocol | Purpose |
 |------|----------|---------|
 | 7881 | TCP | LiveKit signaling |
-| 50000–60000 | UDP | WebRTC media |
+| 50000–60000 | UDP | WebRTC media (configurable via `livekit.rtcPortRangeStart` / `rtcPortRangeEnd`) |
 
 In cloud environments, ensure security groups allow this traffic. On k3s
 with a single node, this typically works out of the box.
@@ -101,12 +101,24 @@ submodule dependencies, making it impractical for self-hosting.
 Administrative tasks (user management, instance configuration) must be done
 directly via the API or MongoDB.
 
+## Gifbox (GIF picker)
+
+The GIF picker in the modern client (`for-web`) is hardcoded to call the
+official Stoatchat gifbox instance — not the self-hosted proxy. Deploying
+`gifbox` locally is therefore useless: the client ignores it entirely.
+
+The GIF button cannot be hidden or disabled from the client UI, and there
+is no client-side setting to point it at a custom gifbox URL.
+
+`apps.gifbox.enabled` is set to `false` by default for this reason.
+
 ## Voice upstream status
 
 The `voice-ingress` daemon (LiveKit webhook → MongoDB/RabbitMQ bridge) is
-missing from the official self-hosted Docker Compose setup. Voice
-functionality may be incomplete or broken upstream.
+included in this deployment but missing from the official
+[stoatchat/self-hosted](https://github.com/stoatchat/self-hosted) Docker
+Compose setup. Voice functionality may be incomplete or broken upstream.
 
 `voice-ingress` is disabled by default (`apps.voiceIngress.enabled: false`).
-Enable it alongside LiveKit if you want to test voice, but expect potential
-issues.
+See [Compose differences](compose-deployment.md#voice) for compose-specific
+behavior.

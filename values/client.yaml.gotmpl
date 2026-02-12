@@ -12,13 +12,13 @@ services:
 mountRevoltToml: false
 
 env:
-  REVOLT_PUBLIC_URL: {{ .Values._common.hosts.api | quote }}
+  REVOLT_PUBLIC_URL: {{ printf "https://%s/api" .Values.domain | quote }}
 
 ingress:
   enabled: true
   path: /
   pathType: Prefix
-  host: {{ .Values._common.ingress.host }}
-  className: {{ .Values._common.ingress.className }}
-  tlsSecret: {{ .Values._common.ingress.tlsSecret }}
-  tlsIssuer: {{ .Values._common.ingress.tlsIssuer }}
+  host: {{ .Values.domain }}
+  className: {{ .Values.ingress.className }}
+  tlsSecret: {{ .Values.tls.secretName }}
+  tlsIssuer: {{ .Values.tls.issuer }}
