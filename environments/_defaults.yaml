@@ -1,0 +1,79 @@
+# Static defaults — loaded before environment-specific values.
+# Environment files override any of these.
+
+domain: stoatchat.local
+
+# App defaults
+apps:
+  api:
+    enabled: true
+  events:
+    enabled: true
+  fileServer:
+    enabled: true
+  proxy:
+    enabled: true
+  gifbox:
+    enabled: false
+  crond:
+    enabled: true
+  pushd:
+    enabled: true
+  voiceIngress:
+    enabled: false
+  client:
+    enabled: true
+
+# In-cluster infrastructure
+mongodb:
+  enabled: true
+  host: stoatchat-mongodb.stoatchat-mongodb.svc.cluster.local
+  port: 27017
+
+redis:
+  enabled: true
+  host: redis-master.stoatchat-redis.svc.cluster.local
+  port: 6379
+
+rabbitmq:
+  enabled: true
+  host: stoatchat-rabbitmq.stoatchat-rabbitmq.svc.cluster.local
+  port: 5672
+
+minio:
+  enabled: true
+
+livekit:
+  enabled: false
+
+s3:
+  provider: minio
+  endpoint: http://minio.stoatchat-minio.svc.cluster.local:9000
+  host: minio.stoatchat-minio.svc.cluster.local
+  port: 9000
+
+# K8s infrastructure
+ingress:
+  enabled: true
+  className: haproxy
+
+certManager:
+  enabled: true
+
+reflector:
+  enabled: true
+
+tls:
+  issuer: selfsigned
+  secretName: stoatchat-tls
+
+# SMTP (disabled by default)
+smtp:
+  host: ""
+  port: 25
+  username: ""
+  password: ""
+  fromAddress: ""
+  replyTo: ""
+  useTls: false
+  useStarttls: false

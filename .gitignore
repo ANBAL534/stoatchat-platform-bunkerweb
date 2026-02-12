@@ -8,6 +8,7 @@ keys/
 environments/*.yaml
 !environments/*.yaml.example
 !environments/*.yaml.gotmpl
+!environments/_defaults.yaml
 
 # Local clones
 stoat-repos/
