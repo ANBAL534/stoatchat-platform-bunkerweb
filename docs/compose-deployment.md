@@ -32,7 +32,7 @@ On the first run, the script asks a few questions:
 1. **Domain** (default: `stoatchat.local`)
 2. **Voice/video** — enable LiveKit? (default: no)
 3. **Data directory** — where to store persistent data (default: `~/stoat-data`)
-4. **Let's Encrypt email** — only asked for non-`.local` domains
+4. **Let's Encrypt email** — only asked for public domains (skipped for `.local` and `localhost`)
 
 It then generates all secrets, renders Helmfile templates, and produces the
 final `compose.yml` and `Caddyfile`.
@@ -55,20 +55,25 @@ pulling chart updates or changing environment values.
 
 All generated files are gitignored.
 
-## DNS
+## TLS and DNS
 
-Point your domain (and `livekit.<domain>` if voice is enabled) to the host
-running compose. For real domains, Caddy obtains Let's Encrypt certificates
-automatically.
+**TLS is always on.** Stoatchat URLs use `https://` and `wss://`, and Caddy
+handles certificates automatically. Plain HTTP is not supported.
 
-For `.local` domains (local testing), add an `/etc/hosts` entry:
+| Domain type | TLS provider | Action needed |
+|-------------|-------------|---------------|
+| `.local` / `localhost` | Caddy internal CA | Accept the certificate warning, or trust Caddy's root CA from `data/caddy/pki/` |
+| Public domain | Let's Encrypt (automatic) | Point DNS to the host, Caddy handles the rest |
+
+If you're not exposing to the internet, use a `.local` domain (the default)
+and add an `/etc/hosts` entry:
 
 ```
 127.0.0.1  <domain> livekit.<domain>
 ```
 
-Caddy uses its internal CA for `.local` domains. Accept the certificate
-warning in the browser, or trust Caddy's root CA from `data/caddy/pki/`.
+For public domains, point your domain (and `livekit.<domain>` if voice is
+enabled) to the host running compose.
 
 ## Credentials
 

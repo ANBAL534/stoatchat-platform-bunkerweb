@@ -88,10 +88,11 @@ if [[ ! -f helmfile2compose.yaml ]]; then
     read -rp "Data directory [${DEFAULT_DATA}]: " DATA_ROOT
     DATA_ROOT="${DATA_ROOT:-${DEFAULT_DATA}}"
 
-    # -- Email for Let's Encrypt (real domains only, .local uses Caddy internal TLS) --
+    # -- Email for Let's Encrypt (real domains only) --
+    # Caddy uses its internal CA for .local and localhost — no ACME, no email needed
     DOMAIN=$(grep '^domain:' environments/compose.yaml | awk '{print $2}')
     CADDY_EMAIL=""
-    if [[ "$DOMAIN" != *.local ]]; then
+    if [[ "$DOMAIN" != *.local && "$DOMAIN" != localhost ]]; then
         read -rp "Email for Let's Encrypt certificates: " CADDY_EMAIL
     fi
 
