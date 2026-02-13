@@ -64,8 +64,16 @@ handles certificates automatically. Plain HTTP is not supported.
 
 | Domain type | TLS provider | Action needed |
 |-------------|-------------|---------------|
-| `.local` / `localhost` | Caddy internal CA | Accept the certificate warning, or trust Caddy's root CA from `data/caddy/pki/` |
+| `.local` / `localhost` | Caddy internal CA | Accept the certificate warning, or extract and trust the root CA (see below) |
 | Public domain | Let's Encrypt (automatic) | Point DNS to the host, Caddy handles the rest |
+
+To trust the Caddy root CA (avoids browser certificate warnings for `.local` domains):
+
+```bash
+# After first start, the CA cert is at:
+cp data/caddy/pki/authorities/local/root.crt caddy-root-ca.pem
+# Then trust it the same way as the K8s self-signed CA (see main README TLS section)
+```
 
 If you're not exposing to the internet, use a `.local` domain (the default)
 and add an `/etc/hosts` entry:
