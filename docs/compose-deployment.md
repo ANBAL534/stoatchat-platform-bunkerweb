@@ -165,3 +165,5 @@ Docker Compose setup.
 ## Day-to-day operations
 
 For regenerating, data management, troubleshooting, and architecture details, see the [helmfile2compose usage guide](https://github.com/baptisterajaut/helmfile2compose/blob/main/docs/usage-guide.md) and [architecture](https://github.com/baptisterajaut/helmfile2compose/blob/main/docs/architecture.md).
+
+For running this stack alongside other compose projects or an existing reverse proxy, see [advanced usage](https://github.com/baptisterajaut/helmfile2compose/blob/main/docs/advanced.md).
