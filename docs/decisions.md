@@ -86,6 +86,9 @@ matching the lasuite-platform pattern:
 
 The `stoatchat` namespace is created by the `stoatchat-config` chart
 (`namespaces.yaml`) so it exists before app releases deploy into it.
+When livekit is enabled, `stoatchat-livekit` is also created there (the
+livekit Ingress is part of `stoatchat-config`, which deploys before the
+livekit release).
 
 Cross-namespace resources (TLS secrets, ConfigMap) are replicated by
 Reflector using annotations.
@@ -122,9 +125,9 @@ The `stoatchat/livekit-server` fork is just rebranding with minor fixes. I
 use the official upstream chart and image (`livekit/livekit-server`).
 
 The official chart has no built-in ingress support, so the `stoatchat-config`
-chart creates a dedicated Ingress resource for `livekit.<domain>` in the
-`stoatchat-livekit` namespace. cert-manager provisions a separate `livekit-tls`
-certificate automatically.
+chart creates an Ingress resource for `/livekit` on the main domain (in the
+`stoatchat-livekit` namespace). HAProxy merges it with the other app Ingress
+rules. Path rewrite strips the `/livekit` prefix, same pattern as other services.
 
 ## Client web image — custom Dockerfile
 

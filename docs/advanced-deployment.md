@@ -377,7 +377,7 @@ Add the environment block shown by `init.sh` to `helmfile.yaml.gotmpl`.
 
 ### 4. Configure DNS
 
-Point your domain and `livekit.<domain>` (if enabled) to your ingress controller IP.
+Point your domain to your ingress controller IP.
 Let's Encrypt requires valid DNS for certificate issuance.
 
 ### 5. Deploy

@@ -9,7 +9,7 @@ hosts:
   autumn: {{ printf "https://%s/autumn" .Values.domain | quote }}
   january: {{ printf "https://%s/january" .Values.domain | quote }}
   {{- if .Values.livekit.enabled }}
-  livekit: {{ printf "wss://livekit.%s" .Values.domain | quote }}
+  livekit: {{ printf "wss://%s/livekit" .Values.domain | quote }}
   {{- else }}
   livekit: ""
   {{- end }}

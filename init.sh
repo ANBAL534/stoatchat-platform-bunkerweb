@@ -92,7 +92,7 @@ post_deploy() {
 
     echo ""
     echo "Add to /etc/hosts:"
-    echo "${LB_IP}  ${DOMAIN} livekit.${DOMAIN}"
+    echo "${LB_IP}  ${DOMAIN}"
 
     # Extract CA certificate for self-signed setups
     CA_FILE="${SCRIPT_DIR}/stoatchat-ca.pem"
@@ -228,8 +228,7 @@ setup_remote() {
     echo "   # Edit with your external service credentials"
     echo ""
     echo "4. Set up DNS:"
-    echo "   ${DOMAIN}          -> your ingress IP"
-    echo "   livekit.${DOMAIN}  -> your ingress IP (if livekit enabled)"
+    echo "   ${DOMAIN}  -> your ingress IP"
     echo ""
     echo "5. Deploy:"
     echo "   helmfile -e ${ENV_NAME} sync"

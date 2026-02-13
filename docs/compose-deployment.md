@@ -75,11 +75,10 @@ If you're not exposing to the internet, use a `.local` domain (the default)
 and add an `/etc/hosts` entry:
 
 ```
-127.0.0.1  <domain> livekit.<domain>
+127.0.0.1  <domain>
 ```
 
-For public domains, point your domain (and `livekit.<domain>` if voice is
-enabled) to the host running compose.
+For public domains, point your domain to the host running compose.
 
 ## Credentials
 

@@ -10,14 +10,15 @@ metadata:
     app.kubernetes.io/managed-by: Helm
   annotations:
     cert-manager.io/cluster-issuer: {{ .Values.tls.issuer }}
+    haproxy.org/path-rewrite: /livekit/(.*) /\1
 spec:
   ingressClassName: {{ .Values.ingress.className | default "haproxy" }}
   rules:
-    - host: livekit.{{ .Values.domain }}
+    - host: {{ .Values.domain }}
       http:
         paths:
           - pathType: Prefix
-            path: /
+            path: /livekit
             backend:
               service:
                 name: livekit-livekit-server
@@ -25,6 +26,6 @@ spec:
                   number: 80
   tls:
     - hosts:
-        - livekit.{{ .Values.domain }}
-      secretName: livekit-tls
+        - {{ .Values.domain }}
+      secretName: stoatchat-tls
 {{- end }}

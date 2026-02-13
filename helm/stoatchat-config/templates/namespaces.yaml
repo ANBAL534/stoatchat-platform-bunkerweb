@@ -4,3 +4,12 @@ metadata:
   name: stoatchat
   labels:
     {{- include "stoatchat-config.labels" . | nindent 4 }}
+{{- if .Values.hosts.livekit }}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: stoatchat-livekit
+  labels:
+    {{- include "stoatchat-config.labels" . | nindent 4 }}
+{{- end }}

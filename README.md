@@ -20,8 +20,7 @@ stoatchat.local
   /gifbox/*   →  gifbox (GIF proxy)
   /*          →  client (web UI)
 
-livekit.stoatchat.local
-  /*          →  livekit-server (WebRTC)
+  /livekit/*  →  livekit-server (WebRTC)
 ```
 
 Backend services share a single `Revolt.toml` configuration file, generated
@@ -68,7 +67,7 @@ After the script completes:
 
 ```bash
 # Add to /etc/hosts (use the IP printed by init.sh)
-<LB_IP>  stoatchat.local livekit.stoatchat.local
+<LB_IP>  stoatchat.local
 
 # Trust the CA certificate (see TLS section below)
 ```
@@ -201,8 +200,8 @@ apps:
 
 LiveKit requires host-network access for WebRTC media. The UDP port range
 defaults to 50000–60000 (configurable via `livekit.rtcPortRangeStart` /
-`rtcPortRangeEnd`). TCP port 7881 must also be open. A separate
-`livekit.stoatchat.local` Ingress is automatically created by the
+`rtcPortRangeEnd`). TCP port 7881 must also be open. LiveKit is exposed
+at `/livekit` on the main domain via an Ingress created by the
 `stoatchat-config` chart.
 
 ### SMTP
@@ -291,7 +290,7 @@ The script auto-detects `nerdctl` or `docker` and prompts before pushing.
 | `https://stoatchat.local/autumn` | File server |
 | `https://stoatchat.local/january` | Metadata proxy |
 | `https://stoatchat.local/gifbox` | GIF proxy |
-| `wss://livekit.stoatchat.local` | LiveKit (if enabled) |
+| `wss://stoatchat.local/livekit` | LiveKit (if enabled) |
 
 Create an account at the web client URL. Without SMTP configured, email
 verification is skipped and accounts are immediately usable.
