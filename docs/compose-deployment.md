@@ -20,7 +20,7 @@ the unholy script [helmfile2compose](https://github.com/baptisterajaut/helmfile2
 ## Quick start
 
 ```bash
-git clone git@github.com:baptisterajaut/stoatchat-platform.git && cd stoatchat-platform
+git clone https://github.com/baptisterajaut/stoatchat-platform && cd stoatchat-platform
 ./generate-compose.sh
 docker compose up -d   # or: nerdctl compose up -d
 ```
