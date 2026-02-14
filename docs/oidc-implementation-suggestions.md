@@ -108,10 +108,10 @@ JWT signed by the IdP containing ([spec details](https://ldapwiki.com/wiki/Wiki.
 ```
 
 **Validation constraints**:
-- ✅ MUST contain `events` with `http://schemas.openid.net/event/backchannel-logout`
-- ✅ MUST contain `sid` (session ID) and/or `sub` (user ID)
-- ❌ MUST NOT contain `nonce` (prevents ID token reuse)
-- ✅ JWT signature validated with IdP's JWKS
+- MUST contain `events` with `http://schemas.openid.net/event/backchannel-logout`
+- MUST contain `sid` (session ID) and/or `sub` (user ID)
+- MUST NOT contain `nonce` (prevents ID token reuse)
+- JWT signature validated with IdP's JWKS
 
 ### Implementation in Stoatchat
 
@@ -239,12 +239,12 @@ backchannel_logout_session_required: true  # requests sid in logout token
 ```
 
 **Providers supporting backchannel logout**:
-- ✅ Keycloak
-- ✅ Auth0 (requires Enterprise plan)
-- ✅ Zitadel
-- ✅ authentik
-- ✅ Ping Identity
-- ✅ Duende IdentityServer
+- Keycloak
+- Auth0 (requires Enterprise plan)
+- Zitadel
+- authentik
+- Ping Identity
+- Duende IdentityServer
 
 ### Complete Workflow
 
@@ -356,11 +356,11 @@ serde_urlencoded = "0.7"   # Parse backchannel logout form data
 ## Summary
 
 The **hybrid OIDC layer** approach provides:
-- ✅ Functional OIDC authentication without modifying authifier
-- ✅ Single logout via backchannel logout (IdP → Stoatchat)
-- ✅ Coexistence with email/password authentication
-- ✅ ~1-2 weeks implementation time
-- ✅ Reversible with minimal impact
+- Functional OIDC authentication without modifying authifier
+- Single logout via backchannel logout (IdP → Stoatchat)
+- Coexistence with email/password authentication
+- ~1-2 weeks implementation time
+- Reversible with minimal impact
 
 This is the pragmatic path forward for adding OIDC to Stoatchat while preserving the existing authentication infrastructure.
 
@@ -383,11 +383,11 @@ Fork authifier to add OIDC mode alongside email/password authentication.
 - Risk of divergence if upstream rejects PR or goals differ
 - Maintenance burden: forking means owning future merges
 
-**Effort**: 🟠🟠🟠 Medium-High (2-3 weeks if familiar with Rocket + authifier)
+**Effort**: Medium-High (2-3 weeks if familiar with Rocket + authifier)
 
 ---
 
-### 2. OIDC Delegation Layer (Hybrid) ✅ CHOSEN
+### 2. OIDC Delegation Layer (Hybrid) — CHOSEN
 
 Keep authifier unchanged, add an OIDC overlay in delta that creates an authifier account via SSO.
 
@@ -410,7 +410,7 @@ Keep authifier unchanged, add an OIDC overlay in delta that creates an authifier
 - No native single sign-out (OIDC logout doesn't auto-close Stoatchat session) — solvable with backchannel logout
 - Partial duplication: both OIDC provider and authifier store users
 
-**Effort**: 🟢🟢🟠 Medium (1-2 weeks)
+**Effort**: Medium (1-2 weeks)
 
 ---
 
@@ -429,7 +429,7 @@ Remove authifier, implement custom OIDC-first auth system in delta.
 - Existing users must migrate or require compat mode (added complexity)
 - Risk of security regressions if implementation isn't solid
 
-**Effort**: 🔴🔴🔴 High (3-4 weeks + bug risk)
+**Effort**: High (3-4 weeks + bug risk)
 
 ---
 
@@ -446,7 +446,7 @@ Replace Rocket with actix-web to use `actix_web_openidconnect`.
 - Breaks Revolt upstream ecosystem
 - Disproportionate effort just to add OIDC
 
-**Effort**: 🔴🔴🔴🔴 Prohibitive (multiple months)
+**Effort**: Prohibitive (multiple months)
 
 ---
 
