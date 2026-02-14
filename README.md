@@ -368,6 +368,19 @@ Authorities → Import.
 - [Architecture decisions](docs/decisions.md)
 - [Known limitations](docs/known-limitations.md)
 
+## Going Further Than Upstream
+
+This deployment already diverges from official Stoatchat in a few areas where the self-hosting experience can be improved:
+
+- **Video support enabled** — uses a [patched client build](https://github.com/Dadadah/stoat-for-web/tree/patch/enablevideo) with video calls functional before upstream merges it
+- **Webhooks enabled by default** — incoming webhooks work out of the box (upstream defaults to disabled)
+
+### OIDC/SSO Authentication (Exploratory)
+
+For organizations requiring single sign-on, preliminary research has been done on integrating Keycloak (or any OIDC provider) with Stoatchat. See [docs/oidc-implementation-suggestions.md](docs/oidc-implementation-suggestions.md) for a detailed analysis. This will never be submitted upstream (maintainers want to provide OAuth2 for third-party apps, not consume external IdPs), but could be implemented as a local adaptation for self-hosters who need it.
+
+---
+
 ## Acknowledgments
 
 This project is inspired by the official
