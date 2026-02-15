@@ -250,7 +250,7 @@ Build settings are in `docker/client/build.conf`:
 
 ```bash
 WEB_REPO="https://github.com/Dadadah/stoat-for-web"   # web client git repo
-WEB_REF="patch/enablevideo"                            # branch or tag to build
+WEB_REF="echohaus"                                     # branch or tag to build
 ASSETS_REPO="https://github.com/stoatchat/assets.git"  # assets git repo
 WEB_IMAGE="baptisterajaut/stoatchat-web"               # destination image name
 ```
@@ -372,7 +372,7 @@ Authorities → Import.
 
 This deployment already diverges from official Stoatchat in a few areas where the self-hosting experience can be improved:
 
-- **Video support enabled** — uses a [patched client build](https://github.com/Dadadah/stoat-for-web/tree/patch/enablevideo) with video calls functional before upstream merges it
+- **Video support enabled** — uses a [patched client build](https://github.com/Dadadah/stoat-for-web/tree/echohaus) with video calls functional plus email validation bypass, multi-region LiveKit, invite-only registration, and noise cancellation
 - **Webhooks enabled by default** — incoming webhooks work out of the box (upstream defaults to disabled)
 
 ### OIDC/SSO Authentication (Exploratory)

@@ -27,8 +27,13 @@ When `smtp.host` is empty in the environment file, the `[api.smtp]` section is
 omitted from `Revolt.toml` entirely. The API then skips email verification
 and accounts are immediately usable after creation.
 
+The client (`echohaus` branch) includes an email validation bypass flow that
+improves the UX when email verification is disabled server-side - users are
+not prompted for email verification when it's not required.
+
 This is convenient for development but means anyone with network access to
-the instance can create accounts without verification.
+the instance can create accounts without verification. Consider enabling
+invite-only registration (see client features below) for private instances.
 
 ## Bitnami image removal from Docker Hub
 
@@ -89,8 +94,16 @@ These are upstream limitations in the `for-web` codebase, not deployment issues.
 Video and screen sharing are disabled in the upstream `for-web` client
 (hardcoded `isDisabled` in `VoiceCallCardActions.tsx`). The default
 `build.conf` uses a non-mainline patch (`Dadadah/stoat-for-web`,
-branch `patch/enablevideo`) that re-enables these buttons. This is
-experimental and may break with upstream updates (if it works at all)
+branch `echohaus`) that re-enables these buttons and includes additional
+features (see below). This is experimental and may break with upstream
+updates (if it works at all).
+
+**Additional features in `echohaus` branch:**
+- **Email validation bypass** - improved UX when SMTP is disabled
+- **Multi-region LiveKit** - voice server selection based on server description
+- **Invite-only registration** - optional invite code requirement (config-driven)
+- **Noise cancellation** - rnnoise-based audio processor via `@cc-livekit/denoise-plugin`
+- **Legacy button removal** - UI cleanup
 
 ### GIF picker cannot be disabled
 
