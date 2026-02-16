@@ -2,7 +2,7 @@
 
 Run Stoatchat without a Kubernetes cluster. The `generate-compose.sh` script
 converts the same Helmfile output into a `compose.yml` + `Caddyfile`, using
-the unholy script [helmfile2compose](https://github.com/baptisterajaut/helmfile2compose).
+the unholy script [helmfile2compose](https://helmfile2compose.github.io/).
 
 ## What you need
 
@@ -163,6 +163,6 @@ Docker Compose setup.
 
 ## Day-to-day operations
 
-For regenerating, data management, troubleshooting, and architecture details, see the [helmfile2compose usage guide](https://github.com/baptisterajaut/helmfile2compose/blob/main/docs/usage-guide.md) and [architecture](https://github.com/baptisterajaut/helmfile2compose/blob/main/docs/architecture.md).
+For regenerating, data management, troubleshooting, and architecture details, see the [helmfile2compose operations guide](https://helmfile2compose.github.io/user/operations/) and [architecture](https://helmfile2compose.github.io/developer/architecture/).
 
-For running this stack alongside other compose projects or an existing reverse proxy, see [advanced usage](https://github.com/baptisterajaut/helmfile2compose/blob/main/docs/advanced.md).
+For running this stack alongside other compose projects or an existing reverse proxy, see [advanced usage](https://helmfile2compose.github.io/user/advanced/).
