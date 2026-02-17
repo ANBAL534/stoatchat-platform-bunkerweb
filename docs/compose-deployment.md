@@ -6,7 +6,7 @@ the unholy script [helmfile2compose](https://helmfile2compose.github.io/).
 
 ## What you need
 
-- Docker or a compatible runtime (`nerdctl`, `podman`) with compose support
+- **Docker Compose** (v2) or **Podman Compose** (v1.0.6+). **nerdctl compose is deprecated** — h2c v2.1+ uses Docker network aliases for K8s DNS resolution, which nerdctl silently ignores. The script detects nerdctl and falls back to h2c-core v2.0.0, but newer features (inter-cluster SSL via cert-manager/trust-manager operators) will not be available. Migrate to Docker Compose for full support.
 - [Helm](https://helm.sh/) v3 and [Helmfile](https://github.com/helmfile/helmfile) v0.169+
 - Python 3 with `pyyaml` (`pip install pyyaml`)
 - `openssl`
@@ -22,7 +22,7 @@ the unholy script [helmfile2compose](https://helmfile2compose.github.io/).
 ```bash
 git clone https://github.com/baptisterajaut/stoatchat-platform && cd stoatchat-platform
 ./generate-compose.sh
-docker compose up -d   # or: nerdctl compose up -d
+docker compose up -d
 ```
 
 On the first run, the script asks a few questions:
