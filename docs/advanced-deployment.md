@@ -159,6 +159,30 @@ secretOverrides:
   mongo-user: "your_mongo_password"
 ```
 
+### Other configurations  
+If you are using a service such as mongodb atlas or digital ocean database hosting you will need to connect via
+mongodb+srv:// protocol.  
+
+This may require setting a user and managing the mongo instance through their portal.
+
+```yaml
+mongo:
+  enabled: false
+  dnsSrvEnabled: true
+  options: "?tls=true&authSource=admin"
+  host: yourhostname.net
+  username: doadmin
+  port: 27017
+```
+
+this will yield a connection string like:
+
+```text
+mongodb = "mongodb+srv://doadmin:password@yourhostname.net/revolt?tls=true&authSource=admin"
+```
+#### Notes  
+- When connecting this way you cannot provide a port the driver will not support it
+
 ---
 
 ## Using an Existing Redis
