@@ -12,13 +12,13 @@ metadata:
 data:
   Revolt.toml: |
     [database]
-    mongodb = "mongodb://stoatchat:{{ include "getSecret" (dict "seed" .Values.secretSeed "clientId" "mongo-user" "overrides" .Values.secretOverrides) }}@{{ .Values.mongodb.host }}:{{ .Values.mongodb.port }}/revolt"
+    mongodb = "mongodb://{{ .Values.mongodb.username }}:{{ include "getSecret" (dict "seed" .Values.secretSeed "clientId" "mongo-user" "overrides" .Values.secretOverrides) }}@{{ .Values.mongodb.host }}:{{ .Values.mongodb.port }}/revolt"
     redis = "redis://:{{ include "getSecret" (dict "seed" .Values.secretSeed "clientId" "redis" "overrides" .Values.secretOverrides) }}@{{ .Values.redis.host }}:{{ .Values.redis.port }}/"
 
     [rabbit]
     host = "{{ .Values.rabbitmq.host }}"
     port = {{ .Values.rabbitmq.port }}
-    username = "stoatchat"
+    username = "{{ .Values.rabbitmq.username }}"
     password = "{{ include "getSecret" (dict "seed" .Values.secretSeed "clientId" "rabbit-user" "overrides" .Values.secretOverrides) }}"
 
     [hosts]

@@ -17,7 +17,7 @@ services:
 mountRevoltToml: false
 
 env:
-  RABBITMQ_DEFAULT_USER: stoatchat
+  RABBITMQ_DEFAULT_USER: {{ .Values.rabbitmq.username | default "stoatchat" }}
   RABBITMQ_DEFAULT_PASS: {{ template "secret" (list .Values.secretSeed "rabbit-user" $ov) }}
 
 persistence:

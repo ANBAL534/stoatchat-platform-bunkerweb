@@ -27,6 +27,7 @@ gifbox:
 mongodb:
   host: stoatchat-mongodb.stoatchat-mongodb.svc.cluster.local
   port: 27017
+  username: stoatchat
 
 redis:
   host: redis-master.stoatchat-redis.svc.cluster.local
@@ -35,6 +36,7 @@ redis:
 rabbitmq:
   host: stoatchat-rabbitmq.stoatchat-rabbitmq.svc.cluster.local
   port: 5672
+  username: stoatchat
 
 s3:
   endpoint: http://minio.stoatchat-minio.svc.cluster.local:9000

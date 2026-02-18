@@ -147,6 +147,7 @@ mongodb:
   enabled: false  # Do not deploy MongoDB
   host: mongo.example.com
   port: 27017
+  username: stoatchat  # must match the user created above
 ```
 
 ### 3. Set the password
@@ -205,6 +206,7 @@ rabbitmq:
   enabled: false  # Do not deploy RabbitMQ
   host: rabbitmq.example.com
   port: 5672
+  username: stoatchat  # must match the user created above
 ```
 
 ### 3. Set the password
@@ -352,12 +354,14 @@ Edit `environments/<name>.yaml` to adjust:
 mongodb:
   enabled: true   # false if external MongoDB
   host: stoatchat-mongodb.stoatchat-mongodb.svc.cluster.local
+  # username: stoatchat  # default, override for managed databases
 
 redis:
   enabled: true   # false if external Redis
 
 rabbitmq:
   enabled: true   # false if external RabbitMQ
+  # username: stoatchat  # default, override for managed services
 
 minio:
   enabled: false  # Use real S3 in production
@@ -406,7 +410,7 @@ Check if the service can reach its dependencies:
 ```bash
 # Test MongoDB connectivity
 kubectl run test --rm -it --image=mongo:latest -- \
-  mongosh "mongodb://stoatchat:<password>@<host>:27017/revolt"
+  mongosh "mongodb://<username>:<password>@<host>:27017/revolt"
 
 # Test Redis connectivity
 kubectl run test --rm -it --image=redis:alpine -- \
@@ -414,7 +418,7 @@ kubectl run test --rm -it --image=redis:alpine -- \
 
 # Test RabbitMQ connectivity
 kubectl run test --rm -it --image=curlimages/curl -- \
-  curl -u stoatchat:<password> http://<host>:15672/api/overview
+  curl -u <username>:<password> http://<host>:15672/api/overview
 ```
 
 ### Retrieve a derived secret

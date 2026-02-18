@@ -30,6 +30,7 @@ mongodb:
   enabled: true
   host: stoatchat-mongodb.stoatchat-mongodb.svc.cluster.local
   port: 27017
+  username: stoatchat
 
 redis:
   enabled: true
@@ -40,6 +41,7 @@ rabbitmq:
   enabled: true
   host: stoatchat-rabbitmq.stoatchat-rabbitmq.svc.cluster.local
   port: 5672
+  username: stoatchat
 
 minio:
   enabled: true

@@ -9,7 +9,7 @@ auth:
   enabled: true
   rootPassword: {{ template "secret" (list .Values.secretSeed "mongo-root" $ov) }}
   usernames:
-    - stoatchat
+    - {{ .Values.mongodb.username | default "stoatchat" }}
   passwords:
     - {{ template "secret" (list .Values.secretSeed "mongo-user" $ov) }}
   databases:

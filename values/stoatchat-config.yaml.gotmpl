@@ -24,6 +24,7 @@ gifbox:
 mongodb:
   host: {{ .Values.mongodb.host | quote }}
   port: {{ .Values.mongodb.port }}
+  username: {{ .Values.mongodb.username | default "stoatchat" | quote }}
 
 redis:
   host: {{ .Values.redis.host | quote }}
@@ -32,6 +33,7 @@ redis:
 rabbitmq:
   host: {{ .Values.rabbitmq.host | quote }}
   port: {{ .Values.rabbitmq.port }}
+  username: {{ .Values.rabbitmq.username | default "stoatchat" | quote }}
 
 s3:
   endpoint: {{ .Values.s3.endpoint | quote }}

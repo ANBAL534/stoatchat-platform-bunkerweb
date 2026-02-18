@@ -28,6 +28,7 @@ mongodb:
   enabled: false
   host: __MONGODB_HOST__
   port: 27017
+  # username: stoatchat  # default, override for managed databases (e.g. doadmin)
 
 redis:
   enabled: false
@@ -38,6 +39,7 @@ rabbitmq:
   enabled: false
   host: __RABBITMQ_HOST__
   port: 5672
+  # username: stoatchat  # default, override for managed services
 
 minio:
   enabled: false
