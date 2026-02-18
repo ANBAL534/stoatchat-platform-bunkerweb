@@ -22,6 +22,8 @@ gifbox:
   tenorKey: {{ index .Values.apps.gifbox "tenorKey" | default "" | quote }}
 
 mongodb:
+  dnsSrvEnabled: {{ .Values.mongodb.dnsSrvEnabled | default false }}
+  options: {{ .Values.mongodb.options | default "" | quote }}
   host: {{ .Values.mongodb.host | quote }}
   port: {{ .Values.mongodb.port }}
   username: {{ .Values.mongodb.username | default "stoatchat" | quote }}
