@@ -25,6 +25,8 @@ gifbox:
 
 # Infrastructure service endpoints
 mongodb:
+  dnsSrvEnabled: false
+  options: ""
   host: stoatchat-mongodb.stoatchat-mongodb.svc.cluster.local
   port: 27017
   username: stoatchat

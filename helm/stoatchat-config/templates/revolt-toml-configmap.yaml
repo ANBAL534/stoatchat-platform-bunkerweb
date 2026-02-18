@@ -12,7 +12,11 @@ metadata:
 data:
   Revolt.toml: |
     [database]
+    {{- if .Values.mongodb.dnsSrvEnabled }}
+    mongodb = "mongodb+srv://{{ .Values.mongodb.username }}:{{ include "getSecret" (dict "seed" .Values.secretSeed "clientId" "mongo-user" "overrides" .Values.secretOverrides) }}@{{ .Values.mongodb.host }}/revolt{{ .Values.mongodb.options }}"
+    {{- else }}
     mongodb = "mongodb://{{ .Values.mongodb.username }}:{{ include "getSecret" (dict "seed" .Values.secretSeed "clientId" "mongo-user" "overrides" .Values.secretOverrides) }}@{{ .Values.mongodb.host }}:{{ .Values.mongodb.port }}/revolt"
+    {{- end }}
     redis = "redis://:{{ include "getSecret" (dict "seed" .Values.secretSeed "clientId" "redis" "overrides" .Values.secretOverrides) }}@{{ .Values.redis.host }}:{{ .Values.redis.port }}/"
 
     [rabbit]
