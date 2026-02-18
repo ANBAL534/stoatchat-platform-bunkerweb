@@ -6,6 +6,7 @@ volume_root: __VOLUME_ROOT__
 caddy_email: "__CADDY_EMAIL__"
 depends:
 - flatten-internal-urls
+- bitnami
 volumes:
   minio:
     host_path: minio
@@ -32,16 +33,6 @@ services:
     - mc alias set local http://minio:9000 $secret:minio:rootUser $secret:minio:rootPassword
       && mc mb --ignore-existing local/revolt-uploads
 overrides:
-  redis-master:
-    image: redis:7-alpine
-    entrypoint: null
-    command:
-    - redis-server
-    - --requirepass
-    - $secret:redis:redis-password
-    volumes:
-    - $volume_root/redis:/data
-    environment: null
   livekit-livekit-server:
     ports:
     - 7881:7881/tcp
