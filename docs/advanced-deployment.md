@@ -159,29 +159,30 @@ secretOverrides:
   mongo-user: "your_mongo_password"
 ```
 
-### Other configurations  
-If you are using a service such as mongodb atlas or digital ocean database hosting you will need to connect via
-mongodb+srv:// protocol.  
+### Managed MongoDB (Atlas, DigitalOcean, etc.)
 
-This may require setting a user and managing the mongo instance through their portal.
+Managed MongoDB providers typically require `mongodb+srv://` connections
+(DNS-based service discovery with TLS). Enable this with `dnsSrvEnabled`:
 
 ```yaml
-mongo:
+# environments/my-env.yaml
+
+mongodb:
   enabled: false
   dnsSrvEnabled: true
   options: "?tls=true&authSource=admin"
   host: yourhostname.net
   username: doadmin
-  port: 27017
 ```
 
-this will yield a connection string like:
+This produces the connection string:
 
-```text
-mongodb = "mongodb+srv://doadmin:password@yourhostname.net/revolt?tls=true&authSource=admin"
 ```
-#### Notes  
-- When connecting this way you cannot provide a port the driver will not support it
+mongodb+srv://doadmin:<password>@yourhostname.net/revolt?tls=true&authSource=admin
+```
+
+> **Note:** `mongodb+srv://` uses DNS SRV records for host resolution.
+> The `port` setting is ignored when `dnsSrvEnabled` is true.
 
 ---
 
