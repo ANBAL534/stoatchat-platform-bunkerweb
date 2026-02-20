@@ -13,6 +13,12 @@ mountRevoltToml: false
 
 env:
   REVOLT_PUBLIC_URL: {{ printf "https://%s/api" .Values.domain | quote }}
+  # Always point at our own domain even if gifbox is disabled —
+  # a local 404 is better than repeated 401s against api.gifbox.me
+  VITE_GIFBOX_URL: {{ printf "https://%s/gifbox" .Values.domain | quote }}
+  {{- if .Values.apps.client.enableVideo }}
+  VITE_CFG_ENABLE_VIDEO: "true"
+  {{- end }}
 
 ingress:
   enabled: true

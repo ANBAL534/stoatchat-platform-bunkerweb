@@ -24,6 +24,7 @@ apps:
     enabled: false
   client:
     enabled: true
+    enableVideo: false
 
 # In-cluster infrastructure
 mongodb:

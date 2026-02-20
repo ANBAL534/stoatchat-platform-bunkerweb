@@ -1,12 +1,20 @@
 # StoatChat Platform
 
-Self-host [Stoatchat](https://github.com/stoatchat) on Kubernetes using Helmfile. The same charts also generate a Docker Compose setup for single-machine deployments — one source of truth for all targets.
+A Helmfile-based deployment for [Stoatchat](https://github.com/stoatchat) on Kubernetes. Infrastructure components (MongoDB, Redis, RabbitMQ, MinIO) use battle-tested Helm charts, making it straightforward to integrate into an existing cluster or swap in managed services. A [helmfile2compose](https://github.com/helmfile2compose) integration generates Docker Compose setups from the same source — useful if you want the same config layer for both targets, though the generated Compose file is less readable than a hand-written one and helmfile2compose is an extra component to learn (the [official self-hosted repo](https://github.com/stoatchat/self-hosted) provides a simpler, turnkey Compose setup).
 
 > **No Kubernetes cluster?** See [Deploy with Compose](docs/compose-deployment.md).
 
-> **Breaking change (14 February 2026):** cert-manager, Reflector and HAProxy have moved to non-prefixed namespaces (`cert-manager`, `reflector`, `haproxy-controller`). They should never have had `stoatchat-` in their namespace names — these are cluster-wide components. See [migration guide](docs/migrate-namespaces.md). (This doesn't impact docker-compose users)
+This is a **reference implementation** — monitoring, GitOps, and security policies are left to operators. Architecture adapted from [lasuite-platform](https://github.com/baptisterajaut/lasuite-platform) (La Suite Numérique).
 
-The [official self-hosted repo](https://github.com/stoatchat/self-hosted/issues/176) is awaiting updates, so I built this Helmfile alternative [as suggested there](https://github.com/stoatchat/self-hosted/issues/176#issuecomment-2668227771). This is a **reference implementation** — monitoring, GitOps, and security policies are left to operators. Architecture adapted from [lasuite-platform](https://github.com/baptisterajaut/lasuite-platform) (La Suite Numérique).
+## But why
+
+***This is not intended to replace the official stoatchat self-host repo***
+
+This started when [it was severely outdated](https://github.com/stoatchat/self-hosted/issues/176). I wanted an up-to-date deployment, and I as love Helmfile, I built one from scratch targeting Kubernetes. 
+
+Then people asked for Compose support because Kubernetes is overkill for their use case — fair enough — so I built [helmfile2compose](https://github.com/helmfile2compose) to generate Compose files from the same Helmfile source rather than maintain a separate Compose setup by hand.
+
+Compared to the official repo, this adds Kubernetes support with its benefits, declarative infrastructure management via Helm, as well as using a patched client build with extra features not yet upstreamed.
 
 ## Architecture
 
@@ -155,7 +163,7 @@ Primary configuration file. Created from `local.yaml.example` by `init.sh`.
 | `secretSeed` | (generated) | Master seed for deterministic secret derivation |
 | `apps.<name>.enabled` | `true`/`false` | Toggle individual services |
 | `apps.api.webhooks` | `true` | Enable incoming webhooks (upstream defaults to `false`) |
-| `apps.gifbox.tenorKey` | `""` | Tenor API key (see [known limitation](docs/known-limitations.md#gif-picker-cannot-be-disabled) — gifbox is currently unusable in self-hosted) |
+| `apps.gifbox.tenorKey` | `""` | Tenor API key (see [known limitation](docs/known-limitations.md#gif-picker-requires-a-tenor-api-key)) |
 | `livekit.enabled` | `false` | Enable LiveKit voice/video (requires extra config) |
 | `livekit.rtcPortRangeStart` | `50000` | First UDP port for WebRTC media |
 | `livekit.rtcPortRangeEnd` | `60000` | Last UDP port for WebRTC media |
@@ -166,7 +174,7 @@ Primary configuration file. Created from `local.yaml.example` by `init.sh`.
 
 All apps default to enabled except `gifbox`, `voiceIngress` (requires LiveKit), and `livekit` itself.
 
-> **Note**: `gifbox` is disabled by default and should stay that way. The client uses the official Stoatchat gifbox instance (`api.gifbox.me`) regardless of whether a local gifbox is deployed. See [known limitations](docs/known-limitations.md#gif-picker-cannot-be-disabled).
+> **Note**: `gifbox` is disabled by default. When deployed, the client points at the local `/gifbox` path. Without it, the GIF button returns a clean 404. See [known limitations](docs/known-limitations.md#gif-picker-requires-a-tenor-api-key).
 
 ```yaml
 apps:
@@ -241,10 +249,12 @@ once by `init.sh` and stored in gitignored `*.secret.yaml` files.
 
 ## Client Image
 
-The web client (`for-web`, SolidJS) has no upstream Docker image suitable
-for self-hosting (upstream bakes env vars at build time). A custom
-Dockerfile in `docker/client/` clones the repo, builds with placeholder
-env vars, and serves via nginx with runtime `sed` replacement at startup.
+Upstream now publishes official client images, but this project uses a custom
+build from the [echohaus fork](https://github.com/Dadadah/stoat-for-web/tree/echohaus)
+which adds video/screenshare support, invite-only registration, email bypass,
+multi-region LiveKit, and noise cancellation. The Dockerfile in `docker/client/`
+builds with placeholder env vars and serves via nginx with runtime `sed`
+replacement at startup.
 
 Build settings are in `docker/client/build.conf`:
 
@@ -274,10 +284,6 @@ STOATCHAT_WEBCLIENT_IMAGE_PUBLISHNAME=myuser/stoatchat-web \
 ```
 
 The script auto-detects `nerdctl` or `docker` and prompts before pushing.
-
-> PR [stoatchat/for-web#522](https://github.com/stoatchat/for-web/pull/522)
-> tracks an official upstream Dockerfile. It doesn't seem to include runtime
-> env replacement so far, so this custom build remains necessary for self-hosting in the meantime.
 
 ## Access
 
@@ -383,16 +389,9 @@ For organizations requiring single sign-on, preliminary research has been done o
 
 ## Acknowledgments
 
-This project is inspired by the official
-[stoatchat/self-hosted](https://github.com/stoatchat/self-hosted) Docker
-Compose setup and adapts it for Kubernetes. I am not affiliated with the
-Stoatchat/Revolt project.
-
-The Helmfile structure, infrastructure charts, secret derivation pattern,
-and deployment tooling are directly adapted from
+Not affiliated with the Stoatchat/Revolt project. The Helmfile structure,
+secret derivation pattern, and deployment tooling are adapted from
 [lasuite-platform](https://github.com/baptisterajaut/lasuite-platform)
-(La Suite Numérique). See [docs/decisions.md](docs/decisions.md) for a
-detailed breakdown of what was reused and what was adapted.
+(La Suite Numérique) — see [docs/decisions.md](docs/decisions.md) for details.
 
-Feedback, bug reports, and contributions are welcome — feel free to open
-an issue.
+Feedback, bug reports, and contributions welcome.

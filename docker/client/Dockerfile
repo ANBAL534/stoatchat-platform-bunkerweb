@@ -19,13 +19,15 @@
 #   VITE_WS_URL         WebSocket URL (derived from REVOLT_PUBLIC_URL by default)
 #   VITE_MEDIA_URL      File server URL (default: .../autumn)
 #   VITE_PROXY_URL      Proxy/embed URL (default: .../january)
+#   VITE_GIFBOX_URL     Gifbox proxy URL (default: .../gifbox)
 #   VITE_HCAPTCHA_SITEKEY
+#   VITE_CFG_ENABLE_VIDEO
 
 # Build stage
-FROM node:22-bookworm-slim AS builder
+FROM node:24-alpine AS builder
 
-RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
-RUN corepack enable && corepack prepare pnpm@10.10.0 --activate
+RUN apk add --no-cache git python3 make g++
+RUN corepack enable && corepack prepare pnpm@10.28.1 --activate
 
 WORKDIR /app
 
@@ -44,16 +46,20 @@ ENV VITE_API_URL=__VITE_API_URL__
 ENV VITE_WS_URL=__VITE_WS_URL__
 ENV VITE_MEDIA_URL=__VITE_MEDIA_URL__
 ENV VITE_PROXY_URL=__VITE_PROXY_URL__
+ENV VITE_GIFBOX_URL=__VITE_GIFBOX_URL__
 ENV VITE_HCAPTCHA_SITEKEY=__VITE_HCAPTCHA_SITEKEY__
+ENV VITE_CFG_ENABLE_VIDEO=__VITE_CFG_ENABLE_VIDEO__
+ENV BASE_PATH=/
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 RUN pnpm install --frozen-lockfile
+RUN pnpm --filter stoat.js build
+RUN pnpm --filter solid-livekit-components build
 RUN pnpm --filter @lingui-solid/babel-plugin-lingui-macro build && \
     pnpm --filter @lingui-solid/babel-plugin-extract-messages build
-RUN pnpm --filter solid-livekit-components build
-RUN pnpm --filter stoat.js build
-RUN pnpm --filter client exec node scripts/copyAssets.mjs
 RUN pnpm --filter client exec lingui compile --typescript
+RUN pnpm --filter client exec node scripts/copyAssets.mjs
+RUN pnpm --filter client exec panda codegen
 RUN pnpm --filter client exec vite build
 
 # Runtime stage

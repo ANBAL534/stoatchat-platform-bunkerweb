@@ -1,4 +1,13 @@
-domain: stoatchat.local
+domain: __DOMAIN__
+
+apps:
+  voiceIngress:
+    enabled: __VOICE_ENABLED__
+  client:
+    enableVideo: __VIDEO_ENABLED__
+
+livekit:
+  enabled: __VOICE_ENABLED__
 
 # SMTP (disabled by default — no email verification)
 smtp:
@@ -6,7 +15,7 @@ smtp:
   port: 25
   username: ""
   password: ""
-  fromAddress: "noreply@stoatchat.local"
+  fromAddress: "noreply@__DOMAIN__"
   replyTo: ""
   useTls: false
   useStarttls: false

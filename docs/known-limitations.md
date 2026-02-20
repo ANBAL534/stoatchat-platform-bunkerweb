@@ -105,18 +105,29 @@ updates (if it works at all).
 - **Noise cancellation** - rnnoise-based audio processor via `@cc-livekit/denoise-plugin`
 - **Legacy button removal** - UI cleanup
 
-### GIF picker cannot be disabled
+### GIF picker requires a Tenor API key
 
-The GIF picker calls the official Stoatchat gifbox instance (`api.gifbox.me`)
-— not any self-hosted proxy. Deploying `gifbox` locally is useless: the client
-ignores it entirely.
+The GIF picker in the client defaults to `api.gifbox.me`, which is the
+official Stoatchat instance and returns 401 to third parties (no public key
+available).
 
-A `gif_picker` experiment is defined in `Experiments.ts` but is **never
-checked** before rendering the picker. The GIF button is always visible
-regardless of the experiment's state. There is no client-side setting to hide
-it or point it at a custom gifbox URL.
+The `gifbox` service in the Stoatchat monorepo is a lightweight Tenor proxy
+(Rust/Axum) — not a full GIF platform. It needs a Google Tenor API key to
+function.
 
-`apps.gifbox.enabled` is set to `false` by default for this reason.
+To enable GIF support, set `apps.gifbox.enabled: true` and
+`apps.gifbox.tenorKey: "<your-key>"` in your environment file.
+
+**Tenor API key caveat:** the gifbox service proxies requests to
+`tenor.googleapis.com/v2` (hardcoded in upstream). As of January 2026,
+Google [no longer accepts new Tenor API clients](https://developers.google.com/tenor/guides/quickstart).
+If you already have a key it still works. Otherwise, gifbox is unusable
+until upstream adds support for an alternative provider (e.g.
+[Klipy](https://klipy.com), a drop-in Tenor replacement).
+
+`apps.gifbox.enabled` is `false` by default — the app works fine without it.
+The client always points at the local `/gifbox` path regardless, so the GIF
+button gets a clean 404 instead of 401s from `api.gifbox.me`.
 
 ### Image pull policy
 

@@ -64,6 +64,15 @@ if [[ ! -f environments/compose.yaml ]]; then
     VOICE="${VOICE:-n}"
     VOICE="${VOICE,,}"
 
+    # -- Video (only if voice enabled) --
+    VIDEO_ENABLED="false"
+    if [[ "$VOICE" == "y" ]]; then
+        read -rp "Enable experimental video/screenshare support? [y/N]: " VIDEO
+        VIDEO="${VIDEO:-n}"
+        VIDEO="${VIDEO,,}"
+        VIDEO_ENABLED=$( [[ "$VIDEO" == "y" ]] && echo "true" || echo "false" )
+    fi
+
     # -- Create environments/compose.yaml from example --
     echo "Creating environments/compose.yaml..."
     SEED="$(generate_seed)"
@@ -71,11 +80,13 @@ if [[ ! -f environments/compose.yaml ]]; then
     sed -e "s|__DOMAIN__|${DOMAIN}|g" \
         -e "s|__SECRET_SEED__|${SEED}|" \
         -e "s|__VOICE_ENABLED__|${VOICE_ENABLED}|g" \
+        -e "s|__VIDEO_ENABLED__|${VIDEO_ENABLED}|g" \
         environments/compose.yaml.example > environments/compose.yaml
 
     echo "  domain:     ${DOMAIN}"
     echo "  secretSeed: ${SEED:0:8}..."
     echo "  voice:      ${VOICE_ENABLED}"
+    echo "  video:      ${VIDEO_ENABLED}"
 
     # -- Non-derivable secrets --
     generate_vapid

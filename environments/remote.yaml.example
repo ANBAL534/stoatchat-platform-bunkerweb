@@ -20,6 +20,7 @@ apps:
     enabled: false   # requires livekit
   client:
     enabled: true
+    enableVideo: false   # requires livekit
 
 # Infrastructure — disabled by default for remote deployments.
 # Enable services you want to run in-cluster, or configure external

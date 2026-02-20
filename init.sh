@@ -141,8 +141,30 @@ setup_local() {
         echo "Using existing ${ENV_FILE}"
         SEED="$(read_seed "${ENV_FILE}")"
     else
+        # -- Domain --
+        read -rp "Domain [stoatchat.local]: " DOMAIN
+        DOMAIN="${DOMAIN:-stoatchat.local}"
+
+        # -- Voice --
+        read -rp "Enable voice/video calls (LiveKit)? [y/N]: " VOICE
+        VOICE="${VOICE:-n}"
+        VOICE="${VOICE,,}"
+        VOICE_ENABLED=$( [[ "$VOICE" == "y" ]] && echo "true" || echo "false" )
+
+        # -- Video (only if voice enabled) --
+        VIDEO_ENABLED="false"
+        if [[ "$VOICE" == "y" ]]; then
+            read -rp "Enable experimental video/screenshare support? [y/N]: " VIDEO
+            VIDEO="${VIDEO:-n}"
+            VIDEO="${VIDEO,,}"
+            VIDEO_ENABLED=$( [[ "$VIDEO" == "y" ]] && echo "true" || echo "false" )
+        fi
+
         SEED="$(generate_seed)"
-        sed "s/^secretSeed: \"\"/secretSeed: \"${SEED}\"/" \
+        sed -e "s|__DOMAIN__|${DOMAIN}|g" \
+            -e "s/^secretSeed: \"\"/secretSeed: \"${SEED}\"/" \
+            -e "s|__VOICE_ENABLED__|${VOICE_ENABLED}|g" \
+            -e "s|__VIDEO_ENABLED__|${VIDEO_ENABLED}|g" \
             "${TEMPLATE_FILE}" > "${ENV_FILE}"
         echo "Created ${ENV_FILE} (seed: ${SEED})"
     fi
