@@ -120,12 +120,13 @@ infrastructure, secret overrides, and production configuration.
 ## Manual Installation
 
 ```bash
-# 1. Create environment file
-cp environments/local.yaml.example environments/local.yaml
-
-# 2. Set a random seed
+# 1. Create environment file from template
 SEED=$(openssl rand -hex 24)
-# Edit environments/local.yaml, set secretSeed: "<seed>"
+sed -e "s|__DOMAIN__|stoatchat.local|g" \
+    -e "s|__VOICE_ENABLED__|false|g" \
+    -e "s|__VIDEO_ENABLED__|false|g" \
+    -e "s/^secretSeed: \"\"/secretSeed: \"${SEED}\"/" \
+    environments/local.yaml.example > environments/local.yaml
 
 # 3. Generate VAPID keys (push notifications)
 TMPKEY=$(mktemp)
