@@ -107,16 +107,22 @@ updates (if it works at all).
 
 ### GIF picker requires a Tenor API key
 
-The GIF picker in the client defaults to `api.gifbox.me`, which is the
-official Stoatchat instance and returns 401 to third parties (no public key
-available).
-
 The `gifbox` service in the Stoatchat monorepo is a lightweight Tenor proxy
 (Rust/Axum) — not a full GIF platform. It needs a Google Tenor API key to
 function.
 
-To enable GIF support, set `apps.gifbox.enabled: true` and
-`apps.gifbox.tenorKey: "<your-key>"` in your environment file.
+To enable GIF support, uncomment and fill in the gifbox section in your
+environment file:
+
+```yaml
+apps:
+  gifbox:
+    enabled: true
+    tenorKey: "<your-tenor-api-key>"
+```
+
+The setting is pre-configured (commented out) in `local.yaml.example`,
+`compose.yaml.example`, and `remote.yaml.example`.
 
 **Tenor API key caveat:** the gifbox service proxies requests to
 `tenor.googleapis.com/v2` (hardcoded in upstream). As of January 2026,
@@ -125,9 +131,18 @@ If you already have a key it still works. Otherwise, gifbox is unusable
 until upstream adds support for an alternative provider (e.g.
 [Klipy](https://klipy.com), a drop-in Tenor replacement).
 
-`apps.gifbox.enabled` is `false` by default — the app works fine without it.
-The client always points at the local `/gifbox` path regardless, so the GIF
-button gets a clean 404 instead of 401s from `api.gifbox.me`.
+**What happens in each state:**
+
+| gifbox   | Tenor key       | Result                                                                                                                                                                                                                                                |
+|----------|-----------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| disabled | n/a             | GIF picker is visible but empty. Requests to `/gifbox` fall through to the client SPA, which returns HTML instead of JSON. The picker silently shows nothing — no console errors.                                                                     |
+| enabled  | invalid/missing | gifbox panics on the unexpected Tenor API response (`unwrap()` on deserialization errors). The pod stays Running but stops handling requests, producing 502s. The picker retries aggressively, eventually triggering 429s from HAProxy rate limiting. |
+| enabled  | valid           | Should work as expected? Idk i don't have a key to test                                                                                                                                                                                               |
+
+**Do not enable gifbox without a valid Tenor key.** The retry storm from
+the GIF picker is enough to hit HAProxy's rate limit for the entire domain,
+which means 429s on all services (API, WebSocket, file uploads) — not just
+gifbox. A bad key can degrade the whole platform.
 
 ### Image pull policy
 

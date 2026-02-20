@@ -5,6 +5,9 @@ apps:
   #   webhooks: false  # disable if you have issues with webhooks
   voiceIngress:
     enabled: __VOICE_ENABLED__
+  # gifbox:
+  #   enabled: true
+  #   tenorKey: ""
   client:
     enableVideo: __VIDEO_ENABLED__
 

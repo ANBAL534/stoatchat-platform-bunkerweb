@@ -3,6 +3,9 @@ domain: __DOMAIN__
 apps:
   voiceIngress:
     enabled: __VOICE_ENABLED__
+  # gifbox:
+  #   enabled: true
+  #   tenorKey: ""
   client:
     enableVideo: __VIDEO_ENABLED__
 

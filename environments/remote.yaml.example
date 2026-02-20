@@ -12,6 +12,7 @@ apps:
     enabled: true
   gifbox:
     enabled: false
+    tenorKey: ""   # required if gifbox enabled
   crond:
     enabled: true
   pushd:
