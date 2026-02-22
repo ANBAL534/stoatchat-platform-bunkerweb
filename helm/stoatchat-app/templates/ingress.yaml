@@ -32,6 +32,15 @@ spec:
                 name: {{ .Values.appName }}
                 port:
                   number: {{ $svcPort }}
+          {{- range .Values.ingress.extraPaths | default list }}
+          - pathType: {{ .pathType | default "Prefix" }}
+            path: {{ .path }}
+            backend:
+              service:
+                name: {{ $.Values.appName }}
+                port:
+                  number: {{ .port | default $svcPort }}
+          {{- end }}
   {{- if .Values.ingress.tlsSecret }}
   tls:
     - hosts:
