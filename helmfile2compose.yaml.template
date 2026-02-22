@@ -19,9 +19,6 @@ exclude:
 - haproxy-ingress*
 - reflector
 - minio-post-job
-replacements:
-- old: path_style_buckets = false
-  new: path_style_buckets = true
 services:
   minio-init:
     image: quay.io/minio/mc:RELEASE.2024-11-21T17-21-54Z

@@ -22,3 +22,6 @@ ingress:
   className: {{ .Values.ingress.className }}
   tlsSecret: {{ .Values.tls.secretName }}
   tlsIssuer: {{ .Values.tls.issuer }}
+  extraPaths:
+    - path: /attachments/
+      pathType: Prefix

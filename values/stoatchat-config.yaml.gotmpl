@@ -40,6 +40,7 @@ rabbitmq:
 s3:
   endpoint: {{ .Values.s3.endpoint | quote }}
   region: {{ if eq .Values.s3.provider "minio" }}"minio"{{ else }}{{ .Values.s3.region | default "us-east-1" | quote }}{{ end }}
+  pathStyleBuckets: {{ if eq .Values.s3.provider "minio" }}true{{ else }}false{{ end }}
   defaultBucket: "revolt-uploads"
 
 smtp:
