@@ -1,9 +1,11 @@
-# Configuration descriptor for https://github.com/baptisterajaut/helmfile2compose
+# Configuration descriptor for https://github.com/helmfile2compose
 
 helmfile2ComposeVersion: v1
 name: stoat
 volume_root: __VOLUME_ROOT__
-caddy_email: "__CADDY_EMAIL__"
+extensions:
+  caddy:
+    email: "__CADDY_EMAIL__"
 depends:
 - flatten-internal-urls
 - bitnami
