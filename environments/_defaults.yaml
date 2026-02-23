@@ -16,7 +16,9 @@ apps:
     enabled: true
   gifbox:
     enabled: false
-    tenorKey: ""
+    provider: upstream  # upstream | klipy | custom
+    apiKey: ""          # Tenor key (upstream) or Klipy key (klipy)
+    customImage: ""     # full image ref (provider: custom only)
   crond:
     enabled: true
   pushd:

@@ -7,7 +7,8 @@ apps:
     enabled: __VOICE_ENABLED__
   # gifbox:
   #   enabled: true
-  #   tenorKey: ""
+  #   provider: upstream  # upstream (Tenor) | klipy | custom
+  #   apiKey: ""          # Tenor or Klipy API key
   client:
     enableVideo: __VIDEO_ENABLED__
 

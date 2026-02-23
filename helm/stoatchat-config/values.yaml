@@ -18,10 +18,13 @@ hosts:
   gifbox: ""
   livekit: ""
 
-# Gifbox (GIF search via Tenor)
+# Gifbox (GIF search proxy)
 gifbox:
   enabled: false
-  tenorKey: ""  # required when gifbox.enabled is true — get one at https://developers.google.com/tenor
+  provider: upstream  # upstream (Tenor) | klipy | custom
+  apiKey: ""          # API key for the selected provider (Tenor or Klipy)
+  tenorKey: ""        # deprecated — use apiKey instead
+  customImage: ""     # full image ref when provider: custom
 
 # Infrastructure service endpoints
 mongodb:

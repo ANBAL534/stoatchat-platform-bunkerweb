@@ -19,6 +19,7 @@ hosts:
 
 gifbox:
   enabled: {{ .Values.apps.gifbox.enabled | default false }}
+  apiKey: {{ .Values.apps.gifbox.apiKey | default "" | quote }}
   tenorKey: {{ index .Values.apps.gifbox "tenorKey" | default "" | quote }}
 
 mongodb:

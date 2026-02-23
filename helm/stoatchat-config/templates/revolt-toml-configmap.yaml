@@ -43,8 +43,9 @@ data:
     [api]
 
     {{- if .Values.gifbox.enabled }}
+    {{- $gifboxKey := .Values.gifbox.apiKey | default .Values.gifbox.tenorKey }}
     [api.security]
-    tenor_key = "{{ .Values.gifbox.tenorKey | required "gifbox.tenorKey is required when gifbox is enabled" }}"
+    tenor_key = "{{ $gifboxKey | required "gifbox.apiKey is required when gifbox is enabled" }}"
     {{- end }}
 
     {{- if .Values.smtp.host }}

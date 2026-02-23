@@ -1,7 +1,20 @@
 appName: stoatchat-gifbox
+{{- $provider := .Values.apps.gifbox.provider | default "upstream" }}
+{{- if eq $provider "klipy" }}
+image:
+  repository: git.britton.me/timbritton/stoat-gifbox
+  tag: latest
+  pullPolicy: Always
+{{- else if eq $provider "custom" }}
+image:
+  repository: {{ .Values.apps.gifbox.customImage | required "apps.gifbox.customImage is required when provider is custom" | quote }}
+  tag: latest
+  pullPolicy: Always
+{{- else }}
 image:
   repository: ghcr.io/stoatchat/gifbox
   tag: {{ index (.Values.stoatchatImageOverrides | default dict) "gifbox" | default .Values.stoatchatImageTag | quote }}
+{{- end }}
 
 services:
   - name: http

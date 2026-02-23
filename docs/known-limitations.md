@@ -105,11 +105,16 @@ updates (if it works at all).
 - **Noise cancellation** - rnnoise-based audio processor via `@cc-livekit/denoise-plugin`
 - **Legacy button removal** - UI cleanup
 
-### GIF picker requires a Tenor API key
+### GIF picker requires an API key
 
-The `gifbox` service in the Stoatchat monorepo is a lightweight Tenor proxy
-(Rust/Axum) — not a full GIF platform. It needs a Google Tenor API key to
-function.
+The `gifbox` service is a lightweight GIF search proxy (Rust/Axum). Three
+providers are supported:
+
+| Provider   | Image                                    | API key source                              |
+|------------|------------------------------------------|---------------------------------------------|
+| `upstream` | `ghcr.io/stoatchat/gifbox` (Tenor)       | [Google Tenor](https://developers.google.com/tenor) — no longer accepting new clients |
+| `klipy`    | `git.britton.me/timbritton/stoat-gifbox` | [Klipy](https://klipy.com) — drop-in Tenor replacement, community fork by [@TimBritton](https://github.com/TimBritton) |
+| `custom`   | User-provided (`customImage`)            | Depends on image                            |
 
 To enable GIF support, uncomment and fill in the gifbox section in your
 environment file:
@@ -118,28 +123,27 @@ environment file:
 apps:
   gifbox:
     enabled: true
-    tenorKey: "<your-tenor-api-key>"
+    provider: klipy          # upstream | klipy | custom
+    apiKey: "<your-api-key>"
+    # customImage: "registry.example.com/my-gifbox:latest"  # provider: custom only
 ```
 
 The setting is pre-configured (commented out) in `local.yaml.example`,
 `compose.yaml.example`, and `remote.yaml.example`.
 
-**Tenor API key caveat:** the gifbox service proxies requests to
-`tenor.googleapis.com/v2` (hardcoded in upstream). As of January 2026,
-Google [no longer accepts new Tenor API clients](https://developers.google.com/tenor/guides/quickstart).
-If you already have a key it still works. Otherwise, gifbox is unusable
-until upstream adds support for an alternative provider (e.g.
-[Klipy](https://klipy.com), a drop-in Tenor replacement).
+**Tenor sunset:** as of January 2026, Google no longer accepts new Tenor
+API clients. Existing keys still work with `provider: upstream`. For new
+deployments, use `provider: klipy` with a Klipy API key.
 
 **What happens in each state:**
 
-| gifbox   | Tenor key       | Result                                                                                                                                                                                                                                                |
+| gifbox   | API key         | Result                                                                                                                                                                                                                                                |
 |----------|-----------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | disabled | n/a             | GIF picker is visible but empty. Requests to `/gifbox` fall through to the client SPA, which returns HTML instead of JSON. The picker silently shows nothing — no console errors.                                                                     |
-| enabled  | invalid/missing | gifbox panics on the unexpected Tenor API response (`unwrap()` on deserialization errors). The pod stays Running but stops handling requests, producing 502s. The picker retries aggressively, eventually triggering 429s from HAProxy rate limiting. |
-| enabled  | valid           | Should work as expected? Idk i don't have a key to test                                                                                                                                                                                               |
+| enabled  | invalid/missing | gifbox panics on the unexpected API response (`unwrap()` on deserialization errors). The pod stays Running but stops handling requests, producing 502s. The picker retries aggressively, eventually triggering 429s from HAProxy rate limiting. |
+| enabled  | valid           | Works as expected.                                                                                                                                                                                                                                    |
 
-**Do not enable gifbox without a valid Tenor key.** The retry storm from
+**Do not enable gifbox without a valid API key.** The retry storm from
 the GIF picker is enough to hit HAProxy's rate limit for the entire domain,
 which means 429s on all services (API, WebSocket, file uploads) — not just
 gifbox. A bad key can degrade the whole platform.
