@@ -1,6 +1,6 @@
 # StoatChat Platform
 
-A Helmfile-based deployment for [Stoatchat](https://github.com/stoatchat) on Kubernetes. Infrastructure components (MongoDB, Redis, RabbitMQ, MinIO) use battle-tested Helm charts, making it straightforward to integrate into an existing cluster or swap in managed services. A [helmfile2compose](https://github.com/helmfile2compose) integration generates Docker Compose setups from the same source — useful if you want the same config layer for both targets, though the generated Compose file is less readable than a hand-written one and helmfile2compose is an extra component to learn (the [official self-hosted repo](https://github.com/stoatchat/self-hosted) provides a simpler, turnkey Compose setup).
+A Helmfile-based deployment for [Stoatchat](https://github.com/stoatchat) on Kubernetes. Infrastructure components (MongoDB, Redis, RabbitMQ, MinIO) use battle-tested Helm charts, making it straightforward to integrate into an existing cluster or swap in managed services. A [helmfile2compose](https://helmfile2compose.dekube.io/) integration generates Docker Compose setups from the same source — useful if you want the same config layer for both targets, though the generated Compose file is less readable than a hand-written one and dekube is an extra component to learn (the [official self-hosted repo](https://github.com/stoatchat/self-hosted) provides a simpler, turnkey Compose setup).
 
 > **No Kubernetes cluster?** See [Deploy with Compose](docs/compose-deployment.md).
 
@@ -12,7 +12,7 @@ This is a **reference implementation** — monitoring, GitOps, and security poli
 
 This started when [it was severely outdated](https://github.com/stoatchat/self-hosted/issues/176). I wanted an up-to-date deployment, and I as love Helmfile, I built one from scratch targeting Kubernetes. 
 
-Then people asked for Compose support because Kubernetes is overkill for their use case — fair enough — so I built [helmfile2compose](https://github.com/helmfile2compose) to generate Compose files from the same Helmfile source rather than maintain a separate Compose setup by hand.
+Then people asked for Compose support because Kubernetes is overkill for their use case — fair enough — so I built [dekube](https://dekube.io) to generate Compose files from the same Helmfile source rather than maintain a separate Compose setup by hand.
 
 Compared to the official repo, this adds Kubernetes support with its benefits, declarative infrastructure management via Helm, as well as using a patched client build with extra features not yet upstreamed.
 

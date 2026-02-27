@@ -1,6 +1,5 @@
-# Configuration descriptor for https://github.com/helmfile2compose
+# Configuration descriptor for https://dekube.io
 
-helmfile2ComposeVersion: v1
 name: stoat
 volume_root: __VOLUME_ROOT__
 extensions:

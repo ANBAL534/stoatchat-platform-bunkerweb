@@ -2,11 +2,11 @@
 
 Run Stoatchat without a Kubernetes cluster. The `generate-compose.sh` script
 converts the same Helmfile output into a `compose.yml` + `Caddyfile`, using
-the unholy script [helmfile2compose](https://helmfile2compose.github.io/).
+the unholy dekube distribution [helmfile2compose](https://helmfile2compose.dekube.io/).
 
 ## What you need
 
-- **Docker Compose** (v2) or **Podman Compose** (v1.0.6+). **nerdctl compose is not recommended** — nerdctl silently ignores Docker network aliases, which h2c uses for K8s DNS resolution. The `flatten-internal-urls` transform currently works around this by rewriting FQDNs to compose service names, but this is a compatibility shim that may be removed in the future. Use Docker Compose for full support.
+- **Docker Compose** (v2) or **Podman Compose** (v1.0.6+). **nerdctl compose is not recommended** — nerdctl silently ignores Docker network aliases, which dekube uses for K8s DNS resolution. The `flatten-internal-urls` transform currently works around this by rewriting FQDNs to compose service names, but this is a compatibility shim that may be removed in the future. Use Docker Compose for full support.
 - [Helm](https://helm.sh/) v3 and [Helmfile](https://github.com/helmfile/helmfile) v0.169+
 - Python 3 with `pyyaml` (`pip install pyyaml`)
 - `openssl`
@@ -45,7 +45,7 @@ pulling chart updates or changing environment values.
 | `environments/compose.yaml` | Helmfile environment values (domain, seed, toggles) |
 | `environments/vapid.secret.yaml` | VAPID keypair for push notifications |
 | `environments/files.secret.yaml` | File encryption key |
-| `helmfile2compose.yaml` | Conversion config (volumes, overrides, custom services) |
+| `dekube.yaml` | Conversion config (volumes, overrides, custom services) |
 | `compose.yml` | Docker Compose service definitions |
 | `Caddyfile` | Reverse proxy config (TLS, path routing) |
 | `configmaps/` | Generated config files (e.g. `Revolt.toml`) |
@@ -163,6 +163,6 @@ Docker Compose setup.
 
 ## Day-to-day operations
 
-For regenerating, data management, troubleshooting, and architecture details, see the [helmfile2compose operations guide](https://helmfile2compose.github.io/user/operations/) and [architecture](https://helmfile2compose.github.io/developer/architecture/).
+For regenerating, data management, troubleshooting, and architecture details, see the [helmfile2compose operations guide](https://helmfile2compose.dekube.io/docs/operations/) and [architecture](https://docs.dekube.io/understand/architecture/).
 
-For running this stack alongside other compose projects or an existing reverse proxy, see [advanced usage](https://helmfile2compose.github.io/user/advanced/).
+For running this stack alongside other compose projects or an existing reverse proxy, see [advanced usage](https://helmfile2compose.dekube.io/docs/advanced/).
